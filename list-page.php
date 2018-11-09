@@ -2,7 +2,11 @@
 $city_selection =  $_POST["City"];
 $room_type_selection = $_POST["Room-Type"];
 $check_in_date_selection = $_POST["check-in-date"];
+$checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
+$checkInDateTime = $checkInDateTime->format('d-m-Y'); 
 $check_out_date_selection = $_POST["check-out-date"];
+$checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
+$checkOutDateTime = $checkOutDateTime->format('d-m-Y'); 
 
 // $query = "SELECT * FROM `room` where ";
 
@@ -18,9 +22,6 @@ $databaseName = "wda2018";
 
 $connect = mysqli_connect($hostname, $username, $password, $databaseName);
 
-// mysql select query
-$query = "SELECT room_id FROM `bookings` WHERE check_in_date < '$check_in_date_selection' OR check_out_date > '$check_out_date_selection'";
-
 //mysql select complex query 
 $complex_query = "SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt,`bookings` AS b WHERE r.room_type = rt.id AND r.room_id=b.room_id 
@@ -29,10 +30,8 @@ AND (('$check_in_date_selection' < b.check_in_date AND '$check_out_date_selectio
 AND r.city = '$city_selection'
 AND rt.room_type = '$room_type_selection'";
 
+$result = mysqli_query($connect, $complex_query);
 
-$result = mysqli_query($connect, $query);
-
-$result1 = mysqli_query($connect, $complex_query);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,13 +48,22 @@ $result1 = mysqli_query($connect, $complex_query);
 	<div ><?php echo $room_type_selection; ?></div>
 	<div ><?php echo $check_in_date_selection; ?></div>
 	<div ><?php echo $check_out_date_selection; ?></div>
-	<div><?php while($row1 = mysqli_fetch_array($result)):;?>
-						<?php echo "id:".$row1[0].",";?>
+	<div><?php while($row = mysqli_fetch_array($result)):;?>
+						<?php echo "id:".$row[0].",a:".$row[1];?><br>
 						<?php endwhile;?>
 	</div>
-	<div><?php while($row1 = mysqli_fetch_array($result1)):;?>
-						<?php echo "id:".$row1[0].",";?>
-						<?php endwhile;?>
+	<div><?php 
+		if ($checkInDateTime < $checkOutDateTime) {
+			echo "check in date before check out date";
+		} else {
+			echo "check in date after check out date";
+		}
+		if ($result->num_rows > 0) {
+			echo " there are rows ";
+		} else {
+			echo " there are NO rows ";
+		}
+		?>
 	</div>
 	<div class="list-page-navbar">
 		<a class="active" href="#">Hotels</a>

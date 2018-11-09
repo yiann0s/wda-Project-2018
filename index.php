@@ -36,7 +36,7 @@ $result1 = mysqli_query($connect, $room_type_query);
 			<a class="active" href="#home"><i class="fa fa-fw fa-home"></i>Home</a> 
 		</div>
 		<div class="welcome-bg-img">
-		  <form action="\wda2018Project\list-page.php" class="welcome-container" method="post">
+		  <form action="\wdaProject2018\list-page.php" class="welcome-container" method="post">
 				<div>
 					<select name="City">
 						<option value="" disabled selected>City</option>
@@ -55,6 +55,8 @@ $result1 = mysqli_query($connect, $room_type_query);
 					<input type="text" name="check-in-date" id="datepicker1" placeholder="Check-in Date">
 					<input type="text" name="check-out-date" id="datepicker2" placeholder="Check-out Date">
 				</div>
+				<div>
+				</div>
 				<button type="submit" class="welcome-btn">Search</button>
 			</form>
 		</div>	
@@ -65,16 +67,13 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<script src="scripts/jquery-ui.js"></script>
 	<script>
 	$( "#datepicker1" ).datepicker({
-		inline: true
+		inline: true,
+		dateFormat: "dd/mm/yy"
 	});
 
 	$( "#datepicker2" ).datepicker({
-		inline: true
-	});
-
-	$( "#slider" ).slider({
-		range: true,
-		values: [ 0, 500 ]
+		inline: true,
+		dateFormat: "dd/mm/yy"
 	});
 	</script>
 	</body>

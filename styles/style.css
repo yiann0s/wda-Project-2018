@@ -1,0 +1,105 @@
+* {box-sizing: border-box}
+
+
+body, html {
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.welcome-navbar {
+  width: 100%;
+  background-color: white;
+  overflow: auto;
+}
+
+.welcome-navbar a {
+  float: left;
+  padding: 12px;
+  color: black;
+  text-decoration: none;
+  font-size: 17px;
+  width: 50%; 
+  text-align: center; /* If you want the text to be centered */
+}
+
+.welcome-navbar a:hover {
+  background-color: #1cff95;
+}
+
+.welcome-navbar .active {
+  background-color: white;
+  color: red;
+}
+
+.welcome-footer {
+    padding: 1px; /* Some padding */
+    text-align: center; /* Center text*/
+    background: #ddd; /* Grey background */
+}
+
+.welcome-bg-img {
+    /* The image used */
+    background-image:url(../images/welcome-image.jpeg);
+    min-height: 380px;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+/* Add styles to the form container */
+.welcome-container {
+    position: absolute;
+    margin-top: 20px;
+    margin-left: 30%;
+	margin-right: 30%;
+    max-width: 40%;
+    padding: 15px;
+    background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 150px;
+    padding: 15px;
+    margin: 5px 2px;
+    border: none;
+    background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+select {
+	width: 150px;
+    padding: 15px;
+    margin: 5px 2px;
+    border: none;
+    background: #f1f1f1;
+}
+
+/* Set a style for the submit button */
+.welcome-btn {
+    background-color: #1cff95;
+    color: white;
+    padding: 20px 16px;
+	border: none;
+	margin-left: 30%;
+	margin-right: 30%;
+    width: 40%;
+    opacity: 0.9;
+}
+
+.welcome-btn:hover {
+    opacity: 1;
+}
+
+@media screen and (max-width: 500px) {
+  .welcome-navbar a {
+    float: none;
+    display: block;
+  }
+}

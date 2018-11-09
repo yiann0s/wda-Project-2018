@@ -1,0 +1,147 @@
+* {
+	box-sizing: border-box
+}
+
+
+body, html {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* Style the top navigation bar */
+.list-page-navbar {
+  width: 100%;
+  background-color: white;
+  overflow: auto;
+}
+
+/* Style the navigation bar links */
+.list-page-navbar a {
+    float: left;
+    color: black;
+	font-size: 17px;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+	width: 33.3%;
+}
+
+/* Right-aligned link */
+/* .list-page-navbar a.right { */
+    /* float: right; */
+/* } */
+
+.list-page-navbar .active {
+  background-color: white;
+  color: red;
+}
+
+/* Change color on hover */
+.list-page-navbar a:hover {
+    background-color: #1cff95;
+}
+
+/* Column container */
+.row {  
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Create two unequal columns that sits next to each other */
+/* Sidebar/left column */
+.side {
+    flex: 20%;
+    background-color: #f1f1f1;
+    padding: 20px;
+}
+
+/* Main column */
+.main {   
+    flex: 80%;
+    background-color: white;
+    padding: 20px;
+}
+
+/* Fake image, just for this example */
+.fakeimg {
+    background-color: blue;
+    width: 80%;
+	height: 80%;
+    padding: 20px;
+	margin-top: 10%;
+    margin-left: 10%;
+	margin-right: 10%;
+	margin-bottom: 10%;
+}
+
+.per-night {
+	background-color:blue;
+	width: 80%;
+	height: 20%;
+    padding: 20px;
+	margin-top: 10%;
+    margin-left: 10%;
+	margin-right: 10%;
+	margin-bottom: 10%;
+}
+
+/* Fake image, just for this example */
+.fakeimg2 {
+    background-color: pink;
+	border-left: 5px solid orange;
+	width: 80%;
+	height: 80%;
+    padding: 20px;
+	margin-top: 5%;
+    margin-left: 0%;
+	margin-right: 10%;
+	margin-bottom: 3%;
+}
+
+.extra-info {
+	background-color: pink;
+	width: 80%;
+	height: 20%;
+    padding: 20px;
+	margin-top: 0%;
+    margin-left: 0%;
+	margin-right: 10%;
+	margin-bottom: 5%;
+}
+
+/* Column container */
+.search-result-row {  
+    display: flex;
+    flex-wrap: wrap;
+	/* padding: 20px; */
+}
+
+/* Create two unequal columns that sits next to each other */
+/* Sidebar/left column */
+.search-result-side {
+    flex: 30%;
+    background-color: yellow;
+    /* padding: 20px; */
+}
+
+/* Main column */
+.search-result-main {   
+    flex: 70%;
+    background-color: red;
+    /* padding: 20px; */
+}
+
+select {
+	width: 150px;
+    padding: 15px;
+    margin: 5px 2px;
+    border: none;
+    background: #f1f1f1;
+	text-align: center;
+}
+
+.footer {
+    padding: 1px; /* Some padding */
+    text-align: center; /* Center text*/
+    background: #ddd; /* Grey background */
+}

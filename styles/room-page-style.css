@@ -1,0 +1,163 @@
+* {
+	box-sizing: border-box
+}
+
+
+body, html {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* Style the top navigation bar */
+.room-page-navbar {
+  width: 100%;
+  background-color: white;
+  overflow: auto;
+}
+
+/* Style the navigation bar links */
+.room-page-navbar a {
+    float: left;
+    color: black;
+	font-size: 17px;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+	width: 33.3%;
+}
+
+/* Right-aligned link */
+/* .room-page-navbar a.right { */
+    /* float: right; */
+/* } */
+
+/* Change color on hover */
+.room-page-navbar a:hover {
+    background-color: #1cff95;
+}
+
+
+.hotel-info-top-bar {
+  overflow: hidden;
+  background-color: #1cff95;
+}
+
+.hotel-info-top-bar div {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.hotel-info-top-bar div#per-night {
+  float: right;
+}
+
+.fakeimg {
+    background-color: blue;
+	margin-top: 20px;
+	margin-right: 60%;
+	margin-bottom: 20px;
+	border: 2px solid black;
+}
+
+.hotel-info-mid-bar {
+  width: 100%;
+  background-color: #1cff95;
+  overflow: auto;
+}
+
+.hotel-info-mid-bar a {
+  float: left;
+  padding: 12px;
+  color: black;
+  text-decoration: none;
+  border-right: 1px dashed white;
+  font-size: 10px;
+  width: 20%; /* Four links of equal widths */
+  text-align: center;
+}
+
+.hotel-room-description {
+	margin-left: 5px;
+	border-left: 2px solid #1cff95;
+}
+
+
+
+.isBooked {
+	float: right;
+	padding: 12px;
+	color: black;
+	text-decoration: none;
+	font-size: 15px;
+	text-align: center;
+}
+
+#reviews {
+	margin-top: 15px;
+	margin-left: 5px;
+	border-top: 1px dotted black;
+	border-left: 2px solid #1cff95;
+	overflow:scroll;
+	padding: 12px;
+	height:200px;
+}
+
+#add-review {
+	margin-top: 15px;
+	margin-left: 5px;
+	border-top: 1px dotted black;
+	border-left: 2px solid #1cff95;
+	padding: 12px;
+	height:300px;
+}
+
+/* .rating { */
+    /* unicode-bidi: bidi-override; */
+    /* direction: rtl; */
+    /* width: 8em; */
+/* } */
+
+/* .rating input { */
+    /* position: relative; */
+    /* left: -999999px; */
+/* } */
+
+/* .rating label { */
+    /* display: inline-block; */
+    /* font-size: 0; */
+/* } */
+
+/* .rating > label:before { */
+    /* position: relative; */
+    /* font: 24px/1 FontAwesome; */
+    /* display: block; */
+    /* content: "\f005"; */
+    /* color: #ccc; */
+    /* background: -webkit-linear-gradient(-45deg, #d9d9d9 0%, #b3b3b3 100%); */
+    /* -webkit-background-clip: text; */
+    /* -webkit-text-fill-color: transparent; */
+/* } */
+
+/* .rating > label:hover:before, */
+/* .rating > label:hover ~ label:before, */
+/* .rating > label.selected:before, */
+/* .rating > label.selected ~ label:before { */
+    /* color: #f0ad4e; */
+    /* background: -webkit-linear-gradient(-45deg, #fcb551 0%, #d69a45 100%); */
+    /* -webkit-background-clip: text; */
+    /* -webkit-text-fill-color: transparent; */
+/* } */
+
+.footer {
+	position: fixed;
+    padding: 1px; /* Some padding */
+    text-align: center; /* Center text*/
+    background: #ddd; /* Grey background */
+	left: 0;
+    bottom: 0;
+    width: 100%;
+}

@@ -1,0 +1,14 @@
+prwta tha parw to id twn dwmatiwn pou exoun kratithei ths hmeromhnies pou exei epileksei o xrhsths mas kai meta tha ekfanizw apo ta rooms afta ta ids twn dwmatiwn pou den matsaroun ta prwta ids 
+
+//dinei ta required 
+//SELECT A.photo,A.name,A.city,A.area,B.room_type,A.count_of_guests,A.price,A.short_description
+// FROM `room` AS A INNER JOIN `room_type` AS B ON B.id = A.room_type AND A.id IN (
+// SELECT DISTINCT room_id FROM `bookings` WHERE check_in_date < '$check_in_date_selection' 
+ //OR check_out_date > '$check_out_date_selection'); 
+ 
+ inner join tous 3 pinakes 
+ select * from bookings b inner join room r on
+b.room_id = r.room_id inner join room_type rt on 
+r.room_type = rt.id
+
+****kai se afto prepei na paroume to where pou theloume me afta pou exei valei o xrhsths sth prwth forma 

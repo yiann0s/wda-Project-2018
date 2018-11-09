@@ -24,7 +24,8 @@ $query = "SELECT room_id FROM `bookings` WHERE check_in_date < '$check_in_date_s
 //mysql select complex query 
 $complex_query = "SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt,`bookings` AS b WHERE r.room_type = rt.id AND r.room_id=b.room_id 
-AND '$check_in_date_selection' >= b.check_in_date AND '$check_out_date_selection' <= b.check_out_date
+AND (('$check_in_date_selection' < b.check_in_date AND '$check_out_date_selection' <= b.check_in_date) OR
+('$check_in_date_selection' >= b.check_out_date AND '$check_out_date_selection' > b.check_out_date))
 AND r.city = '$city_selection'
 AND rt.room_type = '$room_type_selection'";
 

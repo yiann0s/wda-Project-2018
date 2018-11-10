@@ -3,34 +3,47 @@ $city_selection =  $_POST["City"];
 $room_type_selection = $_POST["Room-Type"];
 $check_in_date_selection = $_POST["check-in-date"];
 $checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
-$checkInDateTime = $checkInDateTime->format('d-m-Y'); 
+$CID = $checkInDateTime->format('Y-m-d'); 
 $check_out_date_selection = $_POST["check-out-date"];
 $checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
-$checkOutDateTime = $checkOutDateTime->format('d-m-Y'); 
-
-// $query = "SELECT * FROM `room` where ";
-
+$COD = $checkOutDateTime->format('Y-m-d'); 
 
 $hostname = "localhost";
 $username = "wda2018";
 $password = "123456";
 $databaseName = "wda2018";
 
-///ena sxolioo 2
-// ena sxolio 3 
-// connect to mysql database
+$connection = mysqli_connect($hostname, $username, $password, $databaseName);
+if (!$connection) {
+	$errors[] = "Error: ".mysqli_error($connection);
+}
 
-$connect = mysqli_connect($hostname, $username, $password, $databaseName);
+//ta id twn dwmatiwn pou einai sthn athina kai einai diklina kai den einai hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
+$complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+FROM `room` AS r,`room_type` AS rt 
+WHERE r.room_type = rt.id 
+AND r.city = "'.$city_selection.'" 
+AND rt.room_type = "'.$room_type_selection.'"
+AND r.room_id NOT IN (
+	SELECT room_id FROM `bookings` 
+	WHERE (check_in_date BETWEEN "'.$CID.'" AND "'.$COD.'") 
+		OR (check_out_date BETWEEN "'.$CID.'" AND "'.$COD.'") 
+		OR ( check_in_date < "'.$CID.'" AND check_out_date > "'.$COD.'")	
+)';
 
-//mysql select complex query 
-$complex_query = "SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
-FROM `room` AS r,`room_type` AS rt,`bookings` AS b WHERE r.room_type = rt.id AND r.room_id=b.room_id 
-AND (('$check_in_date_selection' < b.check_in_date AND '$check_out_date_selection' <= b.check_in_date) OR
-('$check_in_date_selection' >= b.check_out_date AND '$check_out_date_selection' > b.check_out_date))
-AND r.city = '$city_selection'
-AND rt.room_type = '$room_type_selection'";
-
-$result = mysqli_query($connect, $complex_query);
+$result = mysqli_query($connection, $complex_query);
+$message = "";
+$table_data = array();
+if (mysqli_num_rows($result) > 0) {
+	$count = 0;
+	while($row = mysqli_fetch_assoc($result)) {
+		$table_data[] = $row;
+		$count = $count +1;
+	}
+	$message = "there are ".$count." results";
+} else {
+        $message = "no results";
+ }
 
 ?>
 <!DOCTYPE html>
@@ -46,23 +59,45 @@ $result = mysqli_query($connect, $complex_query);
 <body>
 	<div ><?php echo $city_selection; ?></div>
 	<div ><?php echo $room_type_selection; ?></div>
-	<div ><?php echo $check_in_date_selection; ?></div>
-	<div ><?php echo $check_out_date_selection; ?></div>
-	<div><?php while($row = mysqli_fetch_array($result)):;?>
-						<?php echo "id:".$row[0].",a:".$row[1];?><br>
-						<?php endwhile;?>
+	<div ><?php echo "check in date ".$CID; ?></div>
+	<div ><?php echo "check out date ".$COD; ?></div>
+	<div>	<?php
+		if (count($table_data) > 0) {
+	?>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>City</th>
+				<th>Photo</th>
+				<th>Area</th>
+				<th>Room type</th>
+				<th>COunt of guests</th>
+				<th>price</th>
+				<th>short_description</th>
+			</tr>
+	<?php
+			foreach ($table_data as $row) {
+	?>
+			<tr>
+				<td><?php echo $row['name']; ?></td>
+				<td><?php echo $row['city']; ?></td>
+				<td><?php echo $row['photo']; ?></td>
+				<td><?php echo $row['area']; ?></td>
+				<td><?php echo $row['room_type']; ?></td>
+				<td><?php echo $row['count_of_guests']; ?></td>
+				<td><?php echo $row['price']; ?></td>
+				<td><?php echo $row['short_description']; ?></td>
+			</tr>
+	<?php
+			}
+	?>
+		</table>
+	<?php
+		}
+	?>
 	</div>
 	<div><?php 
-		if ($checkInDateTime < $checkOutDateTime) {
-			echo "check in date before check out date";
-		} else {
-			echo "check in date after check out date";
-		}
-		if ($result->num_rows > 0) {
-			echo " there are rows ";
-		} else {
-			echo " there are NO rows ";
-		}
+		echo $message;
 		?>
 	</div>
 	<div class="list-page-navbar">

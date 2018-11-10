@@ -17,10 +17,3 @@ AND (("4-11-2018" < b.check_in_date AND "5-11-2018" <= b.check_in_date)
 OR ("4-11-2018" >= b.check_out_date AND "5-11-2018" > b.check_out_date))
  AND r.city = "Athens" AND rt.room_type = "Double Room" 
  
-//ta id twn dwmatiwn pou einai sthn athina kai einai diklina
-SELECT r.room_id FROM `room` AS r,`room_type` AS rt WHERE r.room_type = rt.id AND r.city = "Athens" AND rt.room_type = "Double Room" 
-
-SELECT * FROM `bookings` AS b 
-WHERE ("4-11-2018" < check_in_date AND "5-11-2018" > check_out_date) 
-OR 
-("4-11-2018" > check_in_date AND "5-11-2018" < check_out_date)

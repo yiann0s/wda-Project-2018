@@ -14,7 +14,7 @@ $databaseName = "wda2018";
 $connect = mysqli_connect($hostname, $username, $password, $databaseName);
 
 // mysql select query
-$city_query = "SELECT DISTINCT city FROM `room`";
+$city_query = "SELECT DISTINCT city FROM `room` ORDER BY city ASC";
 
 $room_type_query = "SELECT room_type FROM `room_type`";
 

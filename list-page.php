@@ -53,6 +53,29 @@ if($result->num_rows === 0){
 	$message = "there are ".$count." results";
 }
 
+//gia kapoio logo to parakatw query sto phpmyadmin vgazei ena result (afto pou theloume ) enw sthn php vgazei 3 
+// SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description 
+// FROM `room` AS r,`room_type` AS rt 
+// WHERE r.room_type = rt.id 
+// AND r.city = "Athens" AND rt.room_type = "Double Room" 
+// AND r.room_id NOT IN 
+	// ( SELECT room_id FROM `bookings` 
+	// WHERE (check_in_date 
+	// BETWEEN "2018-11-4" AND "2018-11-5") 
+	// OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
+	// OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5") )
+
+//$complex_query = "SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+		// FROM `room` AS r,`room_type` AS rt 
+		// WHERE r.room_type = rt.id
+		// AND r.city = \"Athens\" 
+		// AND rt.room_type = \"Double Room\"
+		// AND r.room_id NOT IN (
+			// SELECT room_id FROM `bookings`
+			// WHERE (check_in_date BETWEEN \"2018-11-4\" AND \"2018-11-5\")
+			// OR (check_out_date BETWEEN \"2018-11-4\" AND \"2018-11-5\")
+			// OR ( check_in_date < \"2018-11-4\" AND check_out_date > \"2018-11-5\")
+			// )";
  // $complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 // FROM `room` AS r,`room_type` AS rt 
 // WHERE r.room_type = rt.id 
@@ -177,24 +200,27 @@ if($result->num_rows === 0){
 			 <input type="submit" value="FIND HOTEL">
 		</div>
 		<div class="main">
-			
+
 				<h2>Search Results</h2>
 				<?php	foreach ($table_data as $row) { ?>
 				<div class="search-result-row">
-					<div class="search-result-side">
-						<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
-						<div class="per-night" ><?php echo "Pre night: ".$row['price']; ?></div>
-					</div>
-					<div class="search-result-main">
-						<div class="main-right-side" >
-							<h4><?php echo $row['name']; ?></h4>
-							<h5><?php echo $row['city'].", ".$row['area']; ?></h5>
-							<div><?php echo $row['short_description']; ?></div>
+					<form action="room-page.php" method="post">
+						<div class="search-result-side">
+							<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
+							<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
 						</div>
-						<div class="extra-info">
-							<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
+						<div class="search-result-main">
+							<div class="main-right-side" >
+								<h3><?php echo $row['name']; ?></h4>
+								<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
+								<div><?php echo $row['short_description']; ?></div>
+								<input type="submit">Go to Hotel Page</button>
+							</div>
+							<div class="extra-info">
+								<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
+							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 				<?php	} ?>
 		</div>

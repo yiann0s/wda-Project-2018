@@ -183,21 +183,16 @@ if($result->num_rows === 0){
 				<div class="search-result-row">
 					<div class="search-result-side">
 						<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
-						<div class="per-night" ><?php echo $row['price']; ?></div>
+						<div class="per-night" ><?php echo "Pre night: ".$row['price']; ?></div>
 					</div>
 					<div class="search-result-main">
-						<td><?php echo $row['name']; ?></td>
-						<td><?php echo $row['city']; ?></td>
-						<td><?php echo $row['photo']; ?></td>
-						<td><?php echo $row['area']; ?></td>
-						<td><?php echo $row['room_type']; ?></td>
-						<td><?php echo $row['count_of_guests']; ?></td>
-						<td><?php echo $row['price']; ?></td>
-						<td><?php echo $row['short_description']; ?></td>
-						<div class="fakeimg2" style="height:200px;">Image</div>
+						<div class="main-right-side" >
+							<h4><?php echo $row['name']; ?></h4>
+							<h5><?php echo $row['city'].", ".$row['area']; ?></h5>
+							<div><?php echo $row['short_description']; ?></div>
+						</div>
 						<div class="extra-info">
-						<div><?php echo "Guest count:".$row['count_of_guests']; ?></div>
-						<div><?php echo "Type of room:".$row['room_type']; ?></div>
+							<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
 						</div>
 					</div>
 				</div>

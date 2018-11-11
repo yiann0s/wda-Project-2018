@@ -85,13 +85,13 @@ body, html {
 	margin-bottom: 10%;
 }
 
-/* Fake image, just for this example */
-.fakeimg2 {
+/* main-right-side */
+.main-right-side {
     background-color: pink;
 	border-left: 5px solid orange;
 	width: 80%;
-	height: 80%;
-    padding: 20px;
+	height: 60%;
+    padding: 5px;
 	margin-top: 5%;
     margin-left: 0%;
 	margin-right: 10%;
@@ -102,7 +102,7 @@ body, html {
 	background-color: pink;
 	width: 80%;
 	height: 20%;
-    padding: 20px;
+    padding: 5px;
 	margin-top: 0%;
     margin-left: 0%;
 	margin-right: 10%;

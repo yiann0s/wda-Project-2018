@@ -23,7 +23,7 @@ if ($connection->connect_error) {
 //ta id twn dwmatiwn pou einai sthn athina kai einai diklina kai den einai hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
 
 // prepare and bind
-$stmt = $connection->prepare("SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+$stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt 
 WHERE r.room_type = rt.id 
 AND r.city = ?
@@ -122,6 +122,7 @@ if($result->num_rows === 0){
 	<div>	<?php	if (count($table_data) > 0) {?>
 			<table>
 				<tr>
+					<th>Room ID</th>
 					<th>Name</th>
 					<th>City</th>
 					<th>Photo</th>
@@ -130,9 +131,11 @@ if($result->num_rows === 0){
 					<th>COunt of guests</th>
 					<th>price</th>
 					<th>short_description</th>
+					
 				</tr>
 				<?php	foreach ($table_data as $row) { ?>
 				<tr>
+					<td><?php echo $row['room_id']; ?></td>
 					<td><?php echo $row['name']; ?></td>
 					<td><?php echo $row['city']; ?></td>
 					<td><?php echo $row['photo']; ?></td>
@@ -203,10 +206,11 @@ if($result->num_rows === 0){
 
 				<h2>Search Results</h2>
 				<?php	foreach ($table_data as $row) { ?>
-				<div class="search-result-row">
-					<form action="room-page.php" method="post">
+				<form action="\wdaProject2018\room-page.php" method="post">
+					<div class="search-result-row">
 						<div class="search-result-side">
 							<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
+							<img src="$row['photo'])" />
 							<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
 						</div>
 						<div class="search-result-main">
@@ -214,14 +218,14 @@ if($result->num_rows === 0){
 								<h3><?php echo $row['name']; ?></h4>
 								<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
 								<div><?php echo $row['short_description']; ?></div>
-								<input type="submit">Go to Hotel Page</button>
+								<input type="submit" name="submit" value="Go to Hotel Page">
 							</div>
 							<div class="extra-info">
 								<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
 							</div>
 						</div>
-					</form>
-				</div>
+					</div>
+				</form>
 				<?php	} ?>
 		</div>
   </div>

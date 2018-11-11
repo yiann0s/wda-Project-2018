@@ -7,8 +7,16 @@
 </style>
 </head>
 <body>  
-
+<div><?php 
+$date1= '2018-11-4';
+$date2= '2018-11-2';
+if ($date1 <  $date2)
+	echo "true";
+else 
+	echo "false";
+?></div><br>
 <?php
+
 // define variables and set to empty values
 $nameErr = $emailErr = $genderErr = $websiteErr = "";
 $name = $email = $gender = $comment = $website = "";

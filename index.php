@@ -68,12 +68,12 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<script>
 	$( "#datepicker1" ).datepicker({
 		inline: true,
-		dateFormat: "dd/mm/yy"
+		dateFormat: "yy-mm-dd"
 	});
 
 	$( "#datepicker2" ).datepicker({
 		inline: true,
-		dateFormat: "dd/mm/yy"
+		dateFormat: "yy-mm-dd"
 	});
 	</script>
 	</body>

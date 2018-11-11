@@ -2,48 +2,82 @@
 $city_selection =  $_POST["City"];
 $room_type_selection = $_POST["Room-Type"];
 $check_in_date_selection = $_POST["check-in-date"];
-$checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
-$CID = $checkInDateTime->format('Y-m-d'); 
+// $checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
+// $CID = $checkInDateTime;//->format('Y-m-d'); 
 $check_out_date_selection = $_POST["check-out-date"];
-$checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
-$COD = $checkOutDateTime->format('Y-m-d'); 
+// $checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
+// $COD = $checkOutDateTime->format('Y-m-d'); 
 
 $hostname = "localhost";
 $username = "wda2018";
 $password = "123456";
 $databaseName = "wda2018";
 
-$connection = mysqli_connect($hostname, $username, $password, $databaseName);
-if (!$connection) {
-	$errors[] = "Error: ".mysqli_error($connection);
-}
+// Create connection
+$connection = new mysqli($hostname, $username, $password, $databaseName);
+// Check connection
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+} 
 
 //ta id twn dwmatiwn pou einai sthn athina kai einai diklina kai den einai hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
-$complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+
+// prepare and bind
+$stmt = $connection->prepare("SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt 
 WHERE r.room_type = rt.id 
-AND r.city = "'.$city_selection.'" 
-AND rt.room_type = "'.$room_type_selection.'"
+AND r.city = ?
+AND rt.room_type = ?
 AND r.room_id NOT IN (
 	SELECT room_id FROM `bookings` 
-	WHERE (check_in_date BETWEEN "'.$CID.'" AND "'.$COD.'") 
-		OR (check_out_date BETWEEN "'.$CID.'" AND "'.$COD.'") 
-		OR ( check_in_date < "'.$CID.'" AND check_out_date > "'.$COD.'")	
-)';
+	WHERE (check_in_date BETWEEN ? AND ?) 
+		OR (check_out_date BETWEEN ? AND ?) 
+		OR ( check_in_date < ? AND check_out_date > ?)	
+)");
 
-$result = mysqli_query($connection, $complex_query);
-$message = "";
-$table_data = array();
-if (mysqli_num_rows($result) > 0) {
+$stmt->bind_param("ssssssss", $city_selection, $room_type_selection, 
+$check_in_date_selection,$check_out_date_selection, 
+$check_in_date_selection,$check_out_date_selection,
+ $check_in_date_selection,$check_out_date_selection);
+
+$stmt->execute();
+$result = $stmt->get_result();
+if($result->num_rows === 0){
+	$message = "no results";
+} else{
 	$count = 0;
-	while($row = mysqli_fetch_assoc($result)) {
+	while($row = $result->fetch_assoc()) {
 		$table_data[] = $row;
 		$count = $count +1;
 	}
 	$message = "there are ".$count." results";
-} else {
-        $message = "no results";
- }
+}
+
+ // $complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+// FROM `room` AS r,`room_type` AS rt 
+// WHERE r.room_type = rt.id 
+// AND r.city = "'.$city_selection.'"
+// AND rt.room_type = "'.$room_type_selection.'"
+// AND r.room_id NOT IN (
+	// SELECT room_id FROM `bookings` 
+	// WHERE (check_in_date BETWEEN "2018-11-4" AND "2018-11-5") 
+		// OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
+		// OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5")	
+// )';
+ 
+// $result = $connection->query($complex_query);
+// $message = "";
+// $table_data = array();
+// if ($result->num_rows > 0) {
+	// $count = 0;
+	// while($row = $result->fetch_assoc()) {
+		// $table_data[] = $row;
+		// $count = $count +1;
+	// }
+	// $message = "there are ".$count." results";
+// } else {
+        // $message = "no results";
+ // }
 
 ?>
 <!DOCTYPE html>
@@ -59,46 +93,38 @@ if (mysqli_num_rows($result) > 0) {
 <body>
 	<div ><?php echo $city_selection; ?></div>
 	<div ><?php echo $room_type_selection; ?></div>
-	<div ><?php echo "check in date ".$CID; ?></div>
-	<div ><?php echo "check out date ".$COD; ?></div>
-	<div>	<?php
-		if (count($table_data) > 0) {
-	?>
-		<table>
-			<tr>
-				<th>Name</th>
-				<th>City</th>
-				<th>Photo</th>
-				<th>Area</th>
-				<th>Room type</th>
-				<th>COunt of guests</th>
-				<th>price</th>
-				<th>short_description</th>
-			</tr>
-	<?php
-			foreach ($table_data as $row) {
-	?>
-			<tr>
-				<td><?php echo $row['name']; ?></td>
-				<td><?php echo $row['city']; ?></td>
-				<td><?php echo $row['photo']; ?></td>
-				<td><?php echo $row['area']; ?></td>
-				<td><?php echo $row['room_type']; ?></td>
-				<td><?php echo $row['count_of_guests']; ?></td>
-				<td><?php echo $row['price']; ?></td>
-				<td><?php echo $row['short_description']; ?></td>
-			</tr>
-	<?php
-			}
-	?>
-		</table>
-	<?php
-		}
-	?>
+	<div ><?php echo "check in date unformatted ".$check_in_date_selection; ?></div>
+	<div ><?php echo "check out date unformatted ".$check_out_date_selection; ?></div>
+	<div ><?php echo "type of COD is  ".gettype($check_out_date_selection); ?></div>
+	<div>	<?php	if (count($table_data) > 0) {?>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>City</th>
+					<th>Photo</th>
+					<th>Area</th>
+					<th>Room type</th>
+					<th>COunt of guests</th>
+					<th>price</th>
+					<th>short_description</th>
+				</tr>
+				<?php	foreach ($table_data as $row) { ?>
+				<tr>
+					<td><?php echo $row['name']; ?></td>
+					<td><?php echo $row['city']; ?></td>
+					<td><?php echo $row['photo']; ?></td>
+					<td><?php echo $row['area']; ?></td>
+					<td><?php echo $row['room_type']; ?></td>
+					<td><?php echo $row['count_of_guests']; ?></td>
+					<td><?php echo $row['price']; ?></td>
+					<td><?php echo $row['short_description']; ?></td>
+				</tr>
+				<?php	} ?>
+			</table>
+		<?php	}	?>
 	</div>
-	<div><?php 
-		echo $message;
-		?>
+	<div>
+		<?php echo $message;?>
 	</div>
 	<div class="list-page-navbar">
 		<a class="active" href="#">Hotels</a>
@@ -153,18 +179,29 @@ if (mysqli_num_rows($result) > 0) {
 		<div class="main">
 			
 				<h2>Search Results</h2>
+				<?php	foreach ($table_data as $row) { ?>
 				<div class="search-result-row">
-				<div class="search-result-side">
-					<div class="fakeimg" style="height:200px;">Image</div>
-					<div class="per-night" >aa</div>
-				</div>
-				<div class="search-result-main">
-					<div class="fakeimg2" style="height:200px;">Image</div>
-					<div class="extra-info">
-						<div>guest count</div><div>type of room</div>
+					<div class="search-result-side">
+						<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
+						<div class="per-night" ><?php echo $row['price']; ?></div>
+					</div>
+					<div class="search-result-main">
+						<td><?php echo $row['name']; ?></td>
+						<td><?php echo $row['city']; ?></td>
+						<td><?php echo $row['photo']; ?></td>
+						<td><?php echo $row['area']; ?></td>
+						<td><?php echo $row['room_type']; ?></td>
+						<td><?php echo $row['count_of_guests']; ?></td>
+						<td><?php echo $row['price']; ?></td>
+						<td><?php echo $row['short_description']; ?></td>
+						<div class="fakeimg2" style="height:200px;">Image</div>
+						<div class="extra-info">
+						<div><?php echo "Guest count:".$row['count_of_guests']; ?></div>
+						<div><?php echo "Type of room:".$row['room_type']; ?></div>
+						</div>
 					</div>
 				</div>
-				</div>
+				<?php	} ?>
 		</div>
   </div>
 </div>

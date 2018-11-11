@@ -1,3 +1,21 @@
+<?php
+$room_id =  $_POST["roomId"];
+
+echo $room_id;
+
+$hostname = "localhost";
+$username = "wda2018";
+$password = "123456";
+$databaseName = "wda2018";
+
+// Create connection
+$connection = new mysqli($hostname, $username, $password, $databaseName);
+// Check connection
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+} 
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +35,7 @@
 		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
 	<div class="hotel-info-top-bar">
-		<div>Megali Vretania Hotel</div>
+		<div><h3><?php echo $room_id; ?></h4></div>
 		<div>Athens, Syntagma</div>
 		<div>Reviews:</div>
 		<div>stars</div>

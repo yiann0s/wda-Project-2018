@@ -209,8 +209,8 @@ if($result->num_rows === 0){
 				<form action="\wdaProject2018\room-page.php" method="post">
 					<div class="search-result-row">
 						<div class="search-result-side">
-							<div class="fakeimg" style="height:200px;"><?php echo $row['photo']; ?></div>
-							<img src="$row['photo'])" />
+							<!--<div class="fakeimg" style="height:200px;"><?php //echo $row['photo']; ?></div> -->
+							<img src="images\rooms\".$row['photo']." />
 							<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
 						</div>
 						<div class="search-result-main">
@@ -218,6 +218,7 @@ if($result->num_rows === 0){
 								<h3><?php echo $row['name']; ?></h4>
 								<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
 								<div><?php echo $row['short_description']; ?></div>
+								<input type="hidden" name="roomId" value="$row['room_id'];">
 								<input type="submit" name="submit" value="Go to Hotel Page">
 							</div>
 							<div class="extra-info">

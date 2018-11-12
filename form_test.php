@@ -8,12 +8,16 @@
 </head>
 <body>  
 <div><?php 
+include 'custom_functions.php';
 $date1= '2018-11-4';
 $date2= '2018-11-2';
 if ($date1 <  $date2)
 	echo "true";
 else 
 	echo "false";
+
+echo ' user stayed for '.days_of_stay("2011-11-5","2013-12-4").' days';
+
 ?></div><br>
 <?php
 

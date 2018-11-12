@@ -1,7 +1,7 @@
 <?php
-$room_id =  $_POST["roomId"];
+include 'custom_functions.php';
 
-echo "Selected room id = ".$room_id;
+$room_id =  $_POST["roomId"];
 
 $hostname = "localhost";
 $username = "wda2018";
@@ -14,6 +14,42 @@ $connection = new mysqli($hostname, $username, $password, $databaseName);
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 } 
+
+$room_extended_info_query = $connection->prepare("SELECT r.photo,r.name,r.city,r.area,r.count_of_guests,r.price,r.long_description,rt.room_type
+FROM `room` AS r,`room_type` AS rt
+WHERE r.room_id =  ? AND r.room_type = rt.id ");
+
+$room_extended_info_query->bind_param("s",$room_id);
+$room_extended_info_query->execute();
+$result = $room_extended_info_query->get_result();
+if($result->num_rows === 0){
+	$message = "no results";
+} else{
+	$count = 0;
+	while($row = $result->fetch_assoc()) {
+		$table_data[] = $row;
+		$count = $count +1;
+	}
+	$message = "there are ".$count." results";
+}
+
+$user_review_query = $connection->prepare("SELECT rv.date_created,rv.rate,rv.text,u.username
+FROM `room` AS r, `reviews` AS rv,`user` AS u
+WHERE rv.user_id = u.user_id AND rv.room_id = r.room_id AND r.room_id = ?");
+$user_review_query->bind_param("s",$room_id);
+$user_review_query->execute();
+$table_data1 = [];
+$result1 = $user_review_query->get_result();
+if($result1->num_rows === 0){
+	$message1 = "no results";
+} else{
+	$count1 = 0;
+	while($row1 = $result1->fetch_assoc()) {
+		$table_data1[] = $row1;
+		$count1 = $count1 +1;
+	}
+	$message1 = "there are ".$count1." results";
+}
 
 ?>
 <!DOCTYPE html>
@@ -29,11 +65,61 @@ if ($connection->connect_error) {
 	 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 </head>
 <body>
-
+	<?php echo $message; echo " Selected room id = ".$room_id;  echo '  '.$message1;?>
 	<div class="room-page-navbar">
 		<a  href="#">Hotels</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-user"></i>Profile</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
+	</div>
+	<div>	
+		<?php	if (count($table_data) > 0) {?>
+			<table>
+				<tr>
+					<th>Photo</th>
+					<th>Name</th>
+					<th>City</th>
+					<th>Area</th>
+					<th>Room type</th>
+					<th>Count of guests</th>
+					<th>price</th>
+					<th>long description</th>
+					
+				</tr>
+				<?php	foreach ($table_data as $row) { ?>
+				<tr>
+					<td><?php echo $row['photo']; ?></td>
+					<td><?php echo $row['name']; ?></td>
+					<td><?php echo $row['city']; ?></td>
+					<td><?php echo $row['photo']; ?></td>
+					<td><?php echo $row['area']; ?></td>
+					<td><?php echo $row['room_type']; ?></td>
+					<td><?php echo $row['count_of_guests']; ?></td>
+					<td><?php echo $row['price']; ?></td>
+					<td><?php echo $row['long_description']; ?></td>
+				</tr>
+				<?php	} ?>
+			</table>
+		<?php	}	?>
+	</div>
+	<div>	
+		<?php	if (count($table_data1) > 0) {?>
+			<table>
+				<tr>
+					<th>date_created</th>
+					<th>rate</th>
+					<th>text</th>
+					<th>username</th>
+				</tr>
+				<?php	foreach ($table_data1 as $row1) { ?>
+				<tr>
+					<td><?php echo $row1['date_created']; ?></td>
+					<td><?php echo $row1['rate']; ?></td>
+					<td><?php echo $row1['text']; ?></td>
+					<td><?php echo $row1['username']; ?></td>
+				</tr>
+				<?php	} ?>
+			</table>
+		<?php	}	?>
 	</div>
 	<div class="hotel-info-top-bar">
 		<div>Athens, Syntagma</div>

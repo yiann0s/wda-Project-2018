@@ -20,9 +20,8 @@ if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 } 
 
-//ta id twn dwmatiwn pou einai sthn athina kai einai diklina kai den einai hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
 
-// prepare and bind
+//ta id twn dwmatiwn pou einai sthn X polh kai einai Y room type  kai den einai kleismena hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
 $stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt 
 WHERE r.room_type = rt.id 
@@ -52,6 +51,18 @@ if($result->num_rows === 0){
 	}
 	$message = "there are ".$count." results";
 }
+
+// count of guests
+
+$count_of_guests_query = "SELECT DISTINCT count_of_guests FROM `room`  
+ORDER BY `room`.`count_of_guests` ASC;";
+$guests_result = mysqli_query($connection,$count_of_guests_query);
+
+$city_query = "SELECT DISTINCT city FROM `room` ORDER BY city ASC";
+$city_result = mysqli_query($connection,$city_query);
+
+$room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
+$room_type_result = mysqli_query($connection,$room_type_query);
 
 //gia kapoio logo to parakatw query sto phpmyadmin vgazei ena result (afto pou theloume ) enw sthn php vgazei 3 
 // SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description 
@@ -114,6 +125,7 @@ if($result->num_rows === 0){
 	<link href="styles/jquery-ui.css" rel="stylesheet">
 </head>
 <body>
+	<?php print_r($_POST); ?>
 	<div ><?php echo $city_selection; ?></div>
 	<div ><?php echo $room_type_selection; ?></div>
 	<div ><?php echo "check in date unformatted ".$check_in_date_selection; ?></div>
@@ -150,7 +162,7 @@ if($result->num_rows === 0){
 		<?php	}	?>
 	</div>
 	<div>
-		<?php echo $message;?>
+		<?php echo "results of statmtnt ".$message;?>
 	</div>
 	<div class="list-page-navbar">
 		<a class="active" href="#">Hotels</a>
@@ -163,28 +175,25 @@ if($result->num_rows === 0){
 				<div>
 					<select name="Count-of-Guests">
 						<option value="" disabled selected>Count of Guests</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
+						<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
+							<option><?php echo $row1[0];?></option>
+						<?php endwhile;?>
 					</select>
 				</div>
 				<div>
 					<select name="City">
 						<option value="" disabled selected>City</option>
-						<option value="Athens">Athens</option>
-						<option value="Thessaloniki">Thessaloniki</option>
-						<option value="Heraklion">Heraklion</option>
-						<option value="Larissa">Larissa</option>
+						<?php while($row2 = mysqli_fetch_array($city_result)):;?>
+							<option><?php echo $row2[0];?></option>
+						<?php endwhile;?>
 					</select>
 				</div>
 					<div>
 					<select name="Room-Type">
 						<option value="" disabled selected>Room type</option>
-						<option value="1-room">single</option>
-						<option value="2-room">double</option>
-						<option value="3-room">three</option>
-						<option value="4-room">four</option>
+						<?php while($row3 = mysqli_fetch_array($room_type_result)):;?>
+							<option><?php echo $row3[0];?></option>
+						<?php endwhile;?>
 					</select>  
 			</div>
 			<div>
@@ -206,27 +215,28 @@ if($result->num_rows === 0){
 
 				<h2>Search Results</h2>
 				<?php	foreach ($table_data as $row) { ?>
-				<form action="\wdaProject2018\room-page.php" method="post">
-					<div class="search-result-row">
-						<div class="search-result-side">
-							<!--<div class="fakeimg" style="height:200px;"><?php //echo $row['photo']; ?></div> -->
-							<img src="images\rooms\".$row['photo']." />
-							<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
-						</div>
-						<div class="search-result-main">
-							<div class="main-right-side" >
-								<h3><?php echo $row['name']; ?></h4>
-								<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
-								<div><?php echo $row['short_description']; ?></div>
-								<input type="hidden" name="roomId" value="$row['room_id'];">
+				<div class="search-result-row">
+					<div class="search-result-side">
+						<!--<div class="fakeimg" style="height:200px;"><?php //echo $row['photo']; ?></div> -->
+						<img src="images\rooms\".$row['photo']." />
+						<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
+					</div>
+					<div class="search-result-main">
+						<div class="main-right-side" >
+							<h3><?php echo $row['name']; ?></h4>
+							<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
+							<div><?php echo $row['short_description']; ?></div>
+							<?php $ID = $row['room_id'];?>
+								<form action="\wdaProject2018\room-page.php" method="post">
+								<input type="hidden" name="roomId" value="<?php echo $row['room_id']; ?>">
 								<input type="submit" name="submit" value="Go to Hotel Page">
-							</div>
-							<div class="extra-info">
-								<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
-							</div>
+							</form>
+						</div>
+						<div class="extra-info">
+							<div><?php echo "Guest count: ".$row['count_of_guests']." | Type of room: ".$row['room_type']; ?></div>
 						</div>
 					</div>
-				</form>
+				</div>
 				<?php	} ?>
 		</div>
   </div>

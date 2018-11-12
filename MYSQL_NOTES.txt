@@ -9,3 +9,35 @@ AND r.room_id NOT IN (
 		OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
 		OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5")	
 )
+
+SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+FROM `room` AS r,`room_type` AS rt 
+WHERE r.room_type = rt.id 
+AND r.city = "Athens" 
+AND rt.room_type = "Double Room"
+AND r.room_id NOT IN (
+	SELECT room_id FROM `bookings` 
+	WHERE ((check_in_date < "2018-11-4" AND check_out_date > "2018-11-5" ) 
+		OR (check_in_date > "2018-11-4" AND check_out_date < "2018-11-5") 
+		OR ( check_in_date >= "2018-11-4" AND check_out_date > "2018-11-5")
+    	OR ( check_in_date < "2018-11-4" AND check_out_date <= "2018-11-5"))
+)
+
+
+////room-page queries
+//mysql query gia na ferei ta apotelesmata enos dwmatiou
+SELECT r.photo,r.name,r.city,r.area,r.count_of_guests,r.price,r.long_description
+FROM `room` AS r
+WHERE r.room_id = "2"
+
+//mysql query to get reviews for a certain room
+SELECT rv.date_created,rv.rate,rv.text,u.username
+FROM `room` AS r, `reviews` AS rv, `user` AS u
+WHERE rv.room_id = r.room_id AND rv.user_id = u.user_id AND r.room_id = ?
+
+//mysql query to get avg ratings for a certain room
+SELECT AVG(rv.rate) FROM `reviews` AS rv, `room` AS rm WHERE rm.room_id = rv.room_id AND rm.room_id = ?
+
+//mysql query to get if this room is favorites by the current user or not 
+SELECT status FROM `favorites` AS fav,`room` AS rm,1`user` AS u WHERE rm.room_id and = fav.room_id AND fav.user_id = u.user_id
+

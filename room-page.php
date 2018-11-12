@@ -1,7 +1,7 @@
 <?php
 $room_id =  $_POST["roomId"];
 
-echo $room_id;
+echo "Selected room id = ".$room_id;
 
 $hostname = "localhost";
 $username = "wda2018";
@@ -29,13 +29,13 @@ if ($connection->connect_error) {
 	 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 </head>
 <body>
+
 	<div class="room-page-navbar">
 		<a  href="#">Hotels</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-user"></i>Profile</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
 	<div class="hotel-info-top-bar">
-		<div><h3><?php echo $room_id; ?></h4></div>
 		<div>Athens, Syntagma</div>
 		<div>Reviews:</div>
 		<div>stars</div>

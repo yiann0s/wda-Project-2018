@@ -38,8 +38,8 @@ WHERE rv.room_id = r.room_id AND rv.user_id = u.user_id AND r.room_id = ?
 //mysql query to get avg ratings for a certain room
 SELECT AVG(rv.rate) FROM `reviews` AS rv, `room` AS rm WHERE rm.room_id = rv.room_id AND rm.room_id = ?
 
-//mysql query to get if this room is favorites by the current user or not 
-SELECT fav.status FROM `favorites` AS fav,`room` AS rm,`user` AS u WHERE rm.room_id and = fav.room_id AND fav.user_id = u.user_id
+//mysql query to get if room X is favorites by the user Y 
+SELECT fav.status FROM `favorites` AS fav,`room` AS rm,`user` AS u WHERE rm.room_id = fav.room_id AND fav.user_id = u.user_id AND u.user_id = ? AND rm.room_id = ?
 
 ////profile-page queries
 //favorites

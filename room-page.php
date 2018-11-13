@@ -21,16 +21,17 @@ WHERE r.room_id =  ? AND r.room_type = rt.id ");
 
 $room_extended_info_query->bind_param("s",$room_id);
 $room_extended_info_query->execute();
-$result = $room_extended_info_query->get_result();
-if($result->num_rows === 0){
-	$message = "no results";
+$room_extended_info_result = $room_extended_info_query->get_result();
+$room_extended_info_table=[];
+if($room_extended_info_result->num_rows === 0){
+	$room_extended_info_message = "no results";
 } else{
-	$count = 0;
-	while($row = $result->fetch_assoc()) {
-		$table_data[] = $row;
-		$count = $count +1;
+	$room_extended_info_count = 0;
+	while($room_extended_info_row = $room_extended_info_result->fetch_assoc()) {
+		$room_extended_info_table[] = $room_extended_info_row;
+		$room_extended_info_count = $room_extended_info_count +1;
 	}
-	$message = "there are ".$count." results";
+	$room_extended_info_message = "there are ".$room_extended_info_count." results";
 }
 
 $user_review_query = $connection->prepare("SELECT rv.date_created,rv.rate,rv.text,u.username
@@ -38,17 +39,36 @@ FROM `room` AS r, `reviews` AS rv,`user` AS u
 WHERE rv.user_id = u.user_id AND rv.room_id = r.room_id AND r.room_id = ?");
 $user_review_query->bind_param("s",$room_id);
 $user_review_query->execute();
-$table_data1 = [];
-$result1 = $user_review_query->get_result();
-if($result1->num_rows === 0){
+$user_review_table = [];
+$user_review_result = $user_review_query->get_result();
+if($user_review_result->num_rows === 0){
 	$message1 = "no results";
 } else{
-	$count1 = 0;
-	while($row1 = $result1->fetch_assoc()) {
-		$table_data1[] = $row1;
-		$count1 = $count1 +1;
+	$user_review_count = 0;
+	while($user_review_row = $user_review_result->fetch_assoc()) {
+		$user_review_table[] = $user_review_row;
+		$user_review_count = $user_review_count +1;
 	}
-	$message1 = "there are ".$count1." results";
+	$user_review_message = "there are ".$user_review_count." results";
+}
+
+$avg_reviews_query = $connection->prepare("SELECT AVG(rv.rate) AS avg_rate_value
+FROM `reviews` AS rv, `room` AS rm 
+WHERE rm.room_id = rv.room_id AND rm.room_id = ?");
+
+$avg_reviews_query->bind_param("s",$room_id);
+$avg_reviews_query->execute();
+$avg_reviews_table = [];
+$avg_reviews_result = $avg_reviews_query->get_result();
+if($avg_reviews_result->num_rows === 0){
+	$avg_reviews_msg = "no results";
+} else{
+	$avgReviewsCount = 0;
+	while($avg_reviews_row = $avg_reviews_result->fetch_assoc()) {
+		$avg_reviews_table = $avg_reviews_row;
+		$avgReviewsCount = $avgReviewsCount +1;
+	}
+	$avg_reviews_msg = "there are ".$avgReviewsCount." results";
 }
 
 ?>
@@ -65,14 +85,18 @@ if($result1->num_rows === 0){
 	 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 </head>
 <body>
-	<?php echo $message; echo " Selected room id = ".$room_id;  echo '  '.$message1;?>
+	<?php 	echo "extended room info msg:".$room_extended_info_message;
+			echo ", Selected room id = ".$room_id;
+			echo ", user review msg:".$user_review_message;
+			echo ", avg reviews msg:".$avg_reviews_msg;
+			?>
 	<div class="room-page-navbar">
 		<a  href="#">Hotels</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-user"></i>Profile</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
 	<div>	
-		<?php	if (count($table_data) > 0) {?>
+		<?php	if (count($room_extended_info_table) > 0) {?>
 			<table>
 				<tr>
 					<th>Photo</th>
@@ -85,37 +109,32 @@ if($result1->num_rows === 0){
 					<th>long description</th>
 					
 				</tr>
-				<?php	foreach ($table_data as $row) { ?>
+				<?php	foreach ($room_extended_info_table as $room_extended_info_row) { ?>
 				<tr>
-					<td><?php echo $row['photo']; ?></td>
-					<td><?php echo $row['name']; ?></td>
-					<td><?php echo $row['city']; ?></td>
-					<td><?php echo $row['photo']; ?></td>
-					<td><?php echo $row['area']; ?></td>
-					<td><?php echo $row['room_type']; ?></td>
-					<td><?php echo $row['count_of_guests']; ?></td>
-					<td><?php echo $row['price']; ?></td>
-					<td><?php echo $row['long_description']; ?></td>
+					<td><?php echo $room_extended_info_row['photo']; ?></td>
+					<td><?php echo $room_extended_info_row['name']; ?></td>
+					<td><?php echo $room_extended_info_row['city']; ?></td>
+					<td><?php echo $room_extended_info_row['photo']; ?></td>
+					<td><?php echo $room_extended_info_row['area']; ?></td>
+					<td><?php echo $room_extended_info_row['room_type']; ?></td>
+					<td><?php echo $room_extended_info_row['count_of_guests']; ?></td>
+					<td><?php echo $room_extended_info_row['price']; ?></td>
+					<td><?php echo $room_extended_info_row['long_description']; ?></td>
 				</tr>
 				<?php	} ?>
 			</table>
 		<?php	}	?>
-	</div>
-	<div>	
-		<?php	if (count($table_data1) > 0) {?>
+		<?php	if (count($avg_reviews_table) > 0) {?>
 			<table>
 				<tr>
-					<th>date_created</th>
-					<th>rate</th>
-					<th>text</th>
-					<th>username</th>
+					<th>Avg rating</th>
 				</tr>
-				<?php	foreach ($table_data1 as $row1) { ?>
+				<?php	foreach ($avg_reviews_table as $avg_reviews_row) { ?>
 				<tr>
-					<td><?php echo $row1['date_created']; ?></td>
-					<td><?php echo $row1['rate']; ?></td>
-					<td><?php echo $row1['text']; ?></td>
-					<td><?php echo $row1['username']; ?></td>
+				<td><?php echo var_dump($avg_reviews_row); ?></td>
+				<td><?php echo $avg_reviews_row[0]; ?></td>
+				<td><?php echo $avg_reviews_row[1]; ?></td>
+				<td><?php echo $avg_reviews_row[2]; ?></td>
 				</tr>
 				<?php	} ?>
 			</table>
@@ -150,6 +169,26 @@ if($result1->num_rows === 0){
 	</div>
 	<div id="reviews">
 	<h5>Reviews</h5>
+	<div>	
+		<?php	if (count($user_review_table) > 0) {?>
+			<table>
+				<tr>
+					<th>date created</th>
+					<th>rate</th>
+					<th>text</th>
+					<th>username</th>
+				</tr>
+				<?php	foreach ($user_review_table as $user_review_row) { ?>
+				<tr>
+					<td><?php echo $user_review_row['date_created']; ?></td>
+					<td><?php echo $user_review_row['rate']; ?></td>
+					<td><?php echo $user_review_row['text']; ?></td>
+					<td><?php echo $user_review_row['username']; ?></td>
+				</tr>
+				<?php	} ?>
+			</table>
+		<?php	}	?>
+	</div>
 	</div>
 	<div id="add-review">
 		<h5>Add Review</h5>

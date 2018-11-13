@@ -131,10 +131,10 @@ if($avg_reviews_result->num_rows === 0){
 				</tr>
 				<?php	foreach ($avg_reviews_table as $avg_reviews_row) { ?>
 				<tr>
-				<td><?php echo var_dump($avg_reviews_row); ?></td>
-				<td><?php echo $avg_reviews_row[0]; ?></td>
-				<td><?php echo $avg_reviews_row[1]; ?></td>
-				<td><?php echo $avg_reviews_row[2]; ?></td>
+				<?php $avg = $avg_reviews_row[0].$avg_reviews_row[1].$avg_reviews_row[2]; ?>
+				<?php $avg = "3.15"; ?>
+				<!-- round(x,y,PHP_ROUND_HALF_UP) round up to 1 decimal e.g 3.14 converts to 3.1 and 3.14 to 3.2 -->
+				<td><?php echo round(floatval($avg),1,PHP_ROUND_HALF_UP); ?></td>
 				</tr>
 				<?php	} ?>
 			</table>

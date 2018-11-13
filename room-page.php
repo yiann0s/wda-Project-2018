@@ -2,6 +2,7 @@
 include 'custom_functions.php';
 
 $room_id =  $_POST["roomId"];
+$current_user_id = "1";
 
 $hostname = "localhost";
 $username = "wda2018";
@@ -71,6 +72,24 @@ if($avg_reviews_result->num_rows === 0){
 	$avg_reviews_msg = "there are ".$avgReviewsCount." results";
 }
 
+$favorite_query = $connection->prepare("SELECT fav.status 
+FROM `favorites` AS fav,`room` AS rm,`user` AS u 
+WHERE rm.room_id = fav.room_id AND fav.user_id = u.user_id AND u.user_id = ? AND rm.room_id = ?");
+$favorite_query->bind_param("ss",$current_user_id,$room_id);
+$favorite_query->execute();
+$favorite_table = [];
+$favorite_result = $favorite_query->get_result();
+if($favorite_result->num_rows === 0){
+	$favorite_msg = "no results";
+} else{
+	$favoriteCount = 0;
+	while($favorite_row = $favorite_result->fetch_assoc()) {
+		$favorite_table = $favorite_row;
+		$favoriteCount = $favoriteCount +1;
+	}
+	$favorite_msg = "there are ".$favoriteCount." results";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -137,6 +156,22 @@ if($avg_reviews_result->num_rows === 0){
 				<td><?php echo round(floatval($avg),1,PHP_ROUND_HALF_UP); ?></td>
 				</tr>
 				<?php	} ?>
+			</table>
+		<?php	}	?>
+		<?php	if (count($favorite_table) > 0) {?>
+			<table>
+				<tr>
+					<th>Favorite?</th>
+				</tr>
+				<tr>
+					<td><?php 	if ( array_values($favorite_table)[0] == 1 ){
+									echo "true";
+								} else {
+									echo "false";
+								}
+						?>
+					</td>
+				</tr>
 			</table>
 		<?php	}	?>
 	</div>

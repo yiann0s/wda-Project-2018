@@ -30,21 +30,52 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="styles/style.css" rel="stylesheet" type="text/css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
+	<script>
+	function isFieldEmpty(id){
+		var field = document.getElementById(id);
+		return (field.value === "");
+	}
+	
+	function evaluateInputFields(){
+		var c = document.getElementById('city_name');
+		var r = document.getElementById('room_type');
+		var d1 = document.getElementById('datepicker1');
+		var d2 = document.getElementById('datepicker2');
+		console.log("city name: "+c.value+" room type "+r.value+" value of d1 is "+d1.value+" and d2 " +d2.value);
+		console.log("Is city name empty ? "+ isFieldEmpty('city_name'));
+		console.log("Is room type empty ? "+ isFieldEmpty('room_type'));
+		console.log("Is check in date empty ? "+ isFieldEmpty('datepicker1'));
+		console.log("Is check out date empty ? "+ isFieldEmpty('datepicker2'));
+		if (isFieldEmpty('city_name')){
+			
+		} else if {
+			
+		} else if {
+			
+		} else if {
+			
+		} else {
+			console.log("All fields are fulfilled");
+		}
+		
+	}
+	
+	</script>
 	<body>
 		<div class="welcome-navbar">
 			<a href="#">Hotels</a> 
 			<a class="active" href="#home"><i class="fa fa-fw fa-home"></i>Home</a> 
 		</div>
 		<div class="welcome-bg-img">
-		  <form action="\wdaProject2018\list-page.php" class="welcome-container" method="post">
+		  <form onsubmit="return evaluateInputFields()" action="\wdaProject2018\list-page.php" class="welcome-container" method="post">
 				<div>
-					<select name="City">
+					<select name="City" id="city_name">
 						<option value="" disabled selected>City</option>
 						<?php while($row1 = mysqli_fetch_array($result)):;?>
 						<option><?php echo $row1[0];?></option>
 						<?php endwhile;?>
 					</select>
-					<select name="Room-Type">
+					<select name="Room-Type" id="room_type">
 						<option value="" disabled selected>Room type</option>
 						<?php while($row1 = mysqli_fetch_array($result1)):;?>
 						<option><?php echo $row1[0];?></option>

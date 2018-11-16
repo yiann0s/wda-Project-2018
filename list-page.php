@@ -22,35 +22,35 @@ if ($connection->connect_error) {
 
 
 //ta id twn dwmatiwn pou einai sthn X polh kai einai Y room type  kai den einai kleismena hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
-$stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
-FROM `room` AS r,`room_type` AS rt 
-WHERE r.room_type = rt.id 
-AND r.city = ?
-AND rt.room_type = ?
-AND r.room_id NOT IN (
-	SELECT room_id FROM `bookings` 
-	WHERE (check_in_date BETWEEN ? AND ?) 
-		OR (check_out_date BETWEEN ? AND ?) 
-		OR ( check_in_date < ? AND check_out_date > ?)	
-)");
+// $stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+// FROM `room` AS r,`room_type` AS rt 
+// WHERE r.room_type = rt.id 
+// AND r.city = ?
+// AND rt.room_type = ?
+// AND r.room_id NOT IN (
+	// SELECT room_id FROM `bookings` 
+	// WHERE (check_in_date BETWEEN ? AND ?) 
+		// OR (check_out_date BETWEEN ? AND ?) 
+		// OR ( check_in_date < ? AND check_out_date > ?)	
+// )");
 
-$stmt->bind_param("ssssssss", $city_selection, $room_type_selection, 
-$check_in_date_selection,$check_out_date_selection, 
-$check_in_date_selection,$check_out_date_selection,
- $check_in_date_selection,$check_out_date_selection);
+// $stmt->bind_param("ssssssss", $city_selection, $room_type_selection, 
+// $check_in_date_selection,$check_out_date_selection, 
+// $check_in_date_selection,$check_out_date_selection,
+ // $check_in_date_selection,$check_out_date_selection);
 
-$stmt->execute();
-$result = $stmt->get_result();
-if($result->num_rows === 0){
-	$message = "no results";
-} else{
-	$count = 0;
-	while($row = $result->fetch_assoc()) {
-		$table_data[] = $row;
-		$count = $count +1;
-	}
-	$message = "there are ".$count." results";
-}
+// $stmt->execute();
+// $result = $stmt->get_result();
+// if($result->num_rows === 0){
+	// $message = "no results";
+// } else{
+	// $count = 0;
+	// while($row = $result->fetch_assoc()) {
+		// $table_data[] = $row;
+		// $count = $count +1;
+	// }
+	// $message = "there are ".$count." results";
+// }
 
 // count of guests
 
@@ -87,31 +87,31 @@ $room_type_result = mysqli_query($connection,$room_type_query);
 			// OR (check_out_date BETWEEN \"2018-11-4\" AND \"2018-11-5\")
 			// OR ( check_in_date < \"2018-11-4\" AND check_out_date > \"2018-11-5\")
 			// )";
- // $complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
-// FROM `room` AS r,`room_type` AS rt 
-// WHERE r.room_type = rt.id 
-// AND r.city = "'.$city_selection.'"
-// AND rt.room_type = "'.$room_type_selection.'"
-// AND r.room_id NOT IN (
-	// SELECT room_id FROM `bookings` 
-	// WHERE (check_in_date BETWEEN "2018-11-4" AND "2018-11-5") 
-		// OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
-		// OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5")	
-// )';
+ $complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+FROM `room` AS r,`room_type` AS rt 
+WHERE r.room_type = rt.id 
+AND r.city = "'.$city_selection.'"
+AND rt.room_type = "'.$room_type_selection.'"
+AND r.room_id NOT IN (
+	SELECT room_id FROM `bookings` 
+	WHERE (check_in_date BETWEEN "2018-11-4" AND "2018-11-5") 
+		OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
+		OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5")	
+)';
  
-// $result = $connection->query($complex_query);
-// $message = "";
-// $table_data = array();
-// if ($result->num_rows > 0) {
-	// $count = 0;
-	// while($row = $result->fetch_assoc()) {
-		// $table_data[] = $row;
-		// $count = $count +1;
-	// }
-	// $message = "there are ".$count." results";
-// } else {
-        // $message = "no results";
- // }
+$result = $connection->query($complex_query);
+$message = "";
+$table_data = array();
+if ($result->num_rows > 0) {
+	$count = 0;
+	while($row = $result->fetch_assoc()) {
+		$table_data[] = $row;
+		$count = $count +1;
+	}
+	$message = "there are ".$count." results";
+} else {
+        $message = "no results";
+ }
 
 ?>
 <!DOCTYPE html>

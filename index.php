@@ -30,38 +30,7 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="styles/style.css" rel="stylesheet" type="text/css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
-	<script>
-	
-	function dateEvaluation(checkInID,checkOutID){
-		
-	}
-	
-	function isFieldEmpty(id){
-		var field = document.getElementById(id);
-		return (field.value === "");
-	}
-	
-	function evaluateInputFields(){
-		if (isFieldEmpty('city_name')){
-			alert("please fill out city name field");
-			return false;
-		} else if (isFieldEmpty('room_type')){
-			alert("please fill out room type field");
-			return false;
-		} else if (isFieldEmpty('datepicker1')){
-			alert("please fill out check in date field");
-			return false;
-		} else if (isFieldEmpty('datepicker2')){
-			alert("please fill out check out date field");
-			return false;
-		} else {
-			alert("all fields are filled");
-			dateEvaluation('datepicker1','datepicker2');
-		}
-		
-	}
-	
-	</script>
+	<script src="scripts/customJSscripts.js"></script>
 	<body>
 		<div class="welcome-navbar">
 			<a href="#">Hotels</a> 
@@ -84,8 +53,8 @@ $result1 = mysqli_query($connect, $room_type_query);
 					</select>  
 				</div>
 				<div>
-					<input type="text" name="check-in-date" id="datepicker1" placeholder="Check-in Date">
-					<input type="text" name="check-out-date" id="datepicker2" placeholder="Check-out Date">
+					<input type="text" name="check-in-date" id="check-in-datepicker" placeholder="Check-in Date">
+					<input type="text" name="check-out-date" id="check-out-datepicker" placeholder="Check-out Date">
 				</div>
 				<div>
 				</div>
@@ -96,17 +65,28 @@ $result1 = mysqli_query($connect, $room_type_query);
 		  <h6>Ioannis Kadianakis 2018 WDA</h6>
 		</div> 
 		<script src="scripts/jquery.js"></script>
-	<script src="scripts/jquery-ui.js"></script>
-	<script>
-	$( "#datepicker1" ).datepicker({
-		inline: true,
-		dateFormat: "yy-mm-dd"
-	});
+		<script src="scripts/jquery-ui.js"></script>
+		<script>
+		$( "#check-in-datepicker" ).datepicker({
+			inline: true,
+			dateFormat: "yy-mm-dd",
+			minDate: new Date(),
+			onSelect: function(date){
 
-	$( "#datepicker2" ).datepicker({
-		inline: true,
-		dateFormat: "yy-mm-dd"
-	});
-	</script>
+				var selectedDate = new Date(date);
+				var msecsInADay = 86400000;
+				var endDate = new Date(selectedDate.getTime() + msecsInADay);
+
+			   //Set Minimum Date of EndDatePicker After Selected Date of StartDatePicker
+				$("#check-out-datepicker").datepicker( "option", "minDate", endDate );
+
+			}
+		});
+
+		$( "#check-out-datepicker" ).datepicker({
+			inline: true,
+			dateFormat: "yy-mm-dd"
+		});
+		</script>
 	</body>
 </html> 

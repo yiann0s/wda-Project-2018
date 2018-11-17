@@ -22,96 +22,50 @@ if ($connection->connect_error) {
 
 
 //ta id twn dwmatiwn pou einai sthn X polh kai einai Y room type  kai den einai kleismena hmeromhnies pou epikalyptoun thn epilogh tou xrhsth
-// $stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
-// FROM `room` AS r,`room_type` AS rt 
-// WHERE r.room_type = rt.id 
-// AND r.city = ?
-// AND rt.room_type = ?
-// AND r.room_id NOT IN (
-	// SELECT room_id FROM `bookings` 
-	// WHERE (check_in_date BETWEEN ? AND ?) 
-		// OR (check_out_date BETWEEN ? AND ?) 
-		// OR ( check_in_date < ? AND check_out_date > ?)	
-// )");
-
-// $stmt->bind_param("ssssssss", $city_selection, $room_type_selection, 
-// $check_in_date_selection,$check_out_date_selection, 
-// $check_in_date_selection,$check_out_date_selection,
- // $check_in_date_selection,$check_out_date_selection);
-
-// $stmt->execute();
-// $result = $stmt->get_result();
-// if($result->num_rows === 0){
-	// $message = "no results";
-// } else{
-	// $count = 0;
-	// while($row = $result->fetch_assoc()) {
-		// $table_data[] = $row;
-		// $count = $count +1;
-	// }
-	// $message = "there are ".$count." results";
-// }
-
-// count of guests
-
-$count_of_guests_query = "SELECT DISTINCT count_of_guests FROM `room`  
-ORDER BY `room`.`count_of_guests` ASC;";
-$guests_result = mysqli_query($connection,$count_of_guests_query);
-
-$city_query = "SELECT DISTINCT city FROM `room` ORDER BY city ASC";
-$city_result = mysqli_query($connection,$city_query);
-
-$room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
-$room_type_result = mysqli_query($connection,$room_type_query);
-
-//gia kapoio logo to parakatw query sto phpmyadmin vgazei ena result (afto pou theloume ) enw sthn php vgazei 3 
-// SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description 
-// FROM `room` AS r,`room_type` AS rt 
-// WHERE r.room_type = rt.id 
-// AND r.city = "Athens" AND rt.room_type = "Double Room" 
-// AND r.room_id NOT IN 
-	// ( SELECT room_id FROM `bookings` 
-	// WHERE (check_in_date 
-	// BETWEEN "2018-11-4" AND "2018-11-5") 
-	// OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
-	// OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5") )
-
-//$complex_query = "SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
-		// FROM `room` AS r,`room_type` AS rt 
-		// WHERE r.room_type = rt.id
-		// AND r.city = \"Athens\" 
-		// AND rt.room_type = \"Double Room\"
-		// AND r.room_id NOT IN (
-			// SELECT room_id FROM `bookings`
-			// WHERE (check_in_date BETWEEN \"2018-11-4\" AND \"2018-11-5\")
-			// OR (check_out_date BETWEEN \"2018-11-4\" AND \"2018-11-5\")
-			// OR ( check_in_date < \"2018-11-4\" AND check_out_date > \"2018-11-5\")
-			// )";
- $complex_query = 'SELECT r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
+$stmt = $connection->prepare("SELECT r.room_id,r.photo,r.name,r.city,r.area,rt.room_type,r.count_of_guests,r.price,r.short_description
 FROM `room` AS r,`room_type` AS rt 
 WHERE r.room_type = rt.id 
-AND r.city = "'.$city_selection.'"
-AND rt.room_type = "'.$room_type_selection.'"
+AND r.city = ?
+AND rt.room_type = ?
 AND r.room_id NOT IN (
 	SELECT room_id FROM `bookings` 
-	WHERE (check_in_date BETWEEN "2018-11-4" AND "2018-11-5") 
-		OR (check_out_date BETWEEN "2018-11-4" AND "2018-11-5") 
-		OR ( check_in_date < "2018-11-4" AND check_out_date > "2018-11-5")	
-)';
- 
-$result = $connection->query($complex_query);
+	WHERE (check_in_date BETWEEN ? AND ?) 
+		OR (check_out_date BETWEEN ? AND ?) 
+		OR ( check_in_date < ? AND check_out_date > ?)	
+)");
+
+$stmt->bind_param("ssssssss", $city_selection, $room_type_selection, 
+$check_in_date_selection,$check_out_date_selection, 
+$check_in_date_selection,$check_out_date_selection,
+ $check_in_date_selection,$check_out_date_selection);
+
+$stmt->execute();
 $message = "";
 $table_data = array();
-if ($result->num_rows > 0) {
+$result = $stmt->get_result();
+if($result->num_rows === 0){
+	$message = "no results";
+} else{
 	$count = 0;
 	while($row = $result->fetch_assoc()) {
 		$table_data[] = $row;
 		$count = $count +1;
 	}
 	$message = "there are ".$count." results";
-} else {
-        $message = "no results";
- }
+}
+
+$count_of_guests_query = "SELECT DISTINCT count_of_guests FROM `room`  
+ORDER BY `room`.`count_of_guests` ASC;";
+$guests_result = mysqli_query($connection,$count_of_guests_query);
+
+$room_type_query = "SELECT room_type FROM `room_type`";
+$room_type_result = mysqli_query($connection, $room_type_query);
+
+$city_query = "SELECT DISTINCT city FROM `room` ORDER BY city ASC";
+$city_result = mysqli_query($connection,$city_query);
+
+$room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
+$room_type_result = mysqli_query($connection,$room_type_query);
 
 ?>
 <!DOCTYPE html>
@@ -130,7 +84,7 @@ if ($result->num_rows > 0) {
 	<div ><?php echo $room_type_selection; ?></div>
 	<div ><?php echo "check in date unformatted ".$check_in_date_selection; ?></div>
 	<div ><?php echo "check out date unformatted ".$check_out_date_selection; ?></div>
-	<div ><?php echo "type of COD is  ".gettype($check_out_date_selection); ?></div>
+	
 	<div>	<?php	if (count($table_data) > 0) {?>
 			<table>
 				<tr>
@@ -172,42 +126,39 @@ if ($result->num_rows > 0) {
 	<div class="row">
 		<div class="side">
 			<h3>FIND THE PERFECT HOTEL</h3>
-				<div>
-					<select name="Count-of-Guests">
-						<option value="" disabled selected>Count of Guests</option>
-						<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
-							<option><?php echo $row1[0];?></option>
-						<?php endwhile;?>
-					</select>
-				</div>
-				<div>
-					<select name="City">
-						<option value="" disabled selected>City</option>
-						<?php while($row2 = mysqli_fetch_array($city_result)):;?>
-							<option><?php echo $row2[0];?></option>
-						<?php endwhile;?>
-					</select>
-				</div>
-					<div>
-					<select name="Room-Type">
-						<option value="" disabled selected>Room type</option>
-						<?php while($row3 = mysqli_fetch_array($room_type_result)):;?>
-							<option><?php echo $row3[0];?></option>
-						<?php endwhile;?>
-					</select>  
+			<div>
+				<select name="Count-of-Guests">
+					<option value="" disabled selected>Count of Guests</option>
+					<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
+						<option <?php if ($room_type_selection == $row1[0]) echo "selected"; ?>><?php echo $row1[0];?></option>
+					<?php endwhile;?>
+				</select>
 			</div>
 			<div>
-				<input id="min-range" contenteditable="true">
-				</input>
-				<input id="max-range" contenteditable="true">
-				</input>
-			</div>
-			<div id="slider"></div>
-			<div>
-				<input type="text" id="datepicker1" placeholder="Check-in Date">
+				<select name="Room-Type">
+					<option value="" disabled selected>Room Type</option>
+					<?php while($room_type_row = mysqli_fetch_array($room_type_result)):;?>
+						<option <?php if ($room_type_selection == $room_type_row[0]) echo "selected"; ?>><?php echo $room_type_row[0];?></option>
+					<?php endwhile;?>
+				</select>
 			</div>
 			<div>
-				<input type="text" id="datepicker2" placeholder="Check-out Date">
+				<select name="City">
+					<option value="" disabled selected>City</option>
+					<?php while($row2 = mysqli_fetch_array($city_result)):;?>
+						<option <?php if ($city_selection == $row2[0]) echo "selected"; ?>><?php echo $row2[0];?></option>
+					<?php endwhile;?>
+				</select>
+			</div>
+			<div>
+				<input type="number" id="start-price" placeholder="from:" min="0" />
+				<input type="number" id="end-price" placeholder="to:" min="0"/>
+			</div>
+			<div>
+				<input type="text" id="check-in-datepicker" placeholder="Check-in Date" value="<?php echo $check_in_date_selection; ?>">
+			</div>
+			<div>
+				<input type="text" id="check-out-datepicker" placeholder="Check-out Date" value="<?php echo $check_out_date_selection; ?>">
 			</div>
 			 <input type="submit" value="FIND HOTEL">
 		</div>
@@ -247,30 +198,34 @@ if ($result->num_rows > 0) {
 	<script src="scripts/jquery.js"></script>
 	<script src="scripts/jquery-ui.js"></script>
 	<script>
-	$( "#datepicker1" ).datepicker({
-		inline: true
-	});
-
-	$( "#datepicker2" ).datepicker({
-		inline: true
-	});
 
 	$( "#slider" ).slider({
 		range: true,
 		values: [ 0, 500 ]
 	});
+	
+	$( "#check-in-datepicker" ).datepicker({
+			inline: true,
+			dateFormat: "yy-mm-dd",
+			minDate: new Date(),
+			onSelect: function(date){
 
+				var selectedDate = new Date(date);
+				var msecsInADay = 86400000;
+				var endDate = new Date(selectedDate.getTime() + msecsInADay);
 
+			   //Set Minimum Date of check out date picker after check in date is selected
+				$("#check-out-datepicker").datepicker( "option", "minDate", endDate );
 
-	// Hover states on the static widgets
-	$( "#dialog-link, #icons li" ).hover(
-		function() {
-			$( this ).addClass( "ui-state-hover" );
-		},
-		function() {
-			$( this ).removeClass( "ui-state-hover" );
-		}
-	);
+			}
+		});
+
+		$( "#check-out-datepicker" ).datepicker({
+			inline: true,
+			dateFormat: "yy-mm-dd",
+			minDate: new Date()
+		});
+
 	</script>
 </body>
 </html>

@@ -31,31 +31,32 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<link href="styles/style.css" rel="stylesheet" type="text/css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
 	<script>
+	
+	function dateEvaluation(checkInID,checkOutID){
+		
+	}
+	
 	function isFieldEmpty(id){
 		var field = document.getElementById(id);
 		return (field.value === "");
 	}
 	
 	function evaluateInputFields(){
-		var c = document.getElementById('city_name');
-		var r = document.getElementById('room_type');
-		var d1 = document.getElementById('datepicker1');
-		var d2 = document.getElementById('datepicker2');
-		console.log("city name: "+c.value+" room type "+r.value+" value of d1 is "+d1.value+" and d2 " +d2.value);
-		console.log("Is city name empty ? "+ isFieldEmpty('city_name'));
-		console.log("Is room type empty ? "+ isFieldEmpty('room_type'));
-		console.log("Is check in date empty ? "+ isFieldEmpty('datepicker1'));
-		console.log("Is check out date empty ? "+ isFieldEmpty('datepicker2'));
 		if (isFieldEmpty('city_name')){
-			
-		} else if {
-			
-		} else if {
-			
-		} else if {
-			
+			alert("please fill out city name field");
+			return false;
+		} else if (isFieldEmpty('room_type')){
+			alert("please fill out room type field");
+			return false;
+		} else if (isFieldEmpty('datepicker1')){
+			alert("please fill out check in date field");
+			return false;
+		} else if (isFieldEmpty('datepicker2')){
+			alert("please fill out check out date field");
+			return false;
 		} else {
-			console.log("All fields are fulfilled");
+			alert("all fields are filled");
+			dateEvaluation('datepicker1','datepicker2');
 		}
 		
 	}

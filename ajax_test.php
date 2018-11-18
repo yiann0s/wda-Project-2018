@@ -165,7 +165,7 @@ if (isset($_POST['email'])) {
 				$emailField.css({
 					"border": "1px solid red"
 				});
-				$('#messages').html("<div class='error'>Your e-mail does not contain a @ character</div>");
+				$('#messages').html("<div class='error'>Your this username does not exist</div>");
 				return false;
 			}
 		}

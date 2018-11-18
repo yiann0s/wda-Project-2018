@@ -169,7 +169,7 @@ $room_type_result = mysqli_query($connection,$room_type_query);
 				<div class="search-result-row">
 					<div class="search-result-side">
 						<!--<div class="fakeimg" style="height:200px;"><?php //echo $row['photo']; ?></div> -->
-						<img src="images\rooms\".$row['photo']." />
+						<?php echo '<img src="/wdaProject2018/images/rooms/'.$row['photo'].'"/>'; ?>
 						<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
 					</div>
 					<div class="search-result-main">

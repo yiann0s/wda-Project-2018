@@ -13,7 +13,7 @@ function dateEvaluation(checkInID,checkOutID){
 
 function isFieldEmpty(id){
 	var field = document.getElementById(id);
-	return (field.value === "");
+	return (!field.value);
 }
 
 function evaluateInputFields(){
@@ -23,14 +23,14 @@ function evaluateInputFields(){
 	} else if (isFieldEmpty('room_type')){
 		alert("please fill out room type field");
 		return false;
-	} else if (isFieldEmpty('datepicker1')){
+	} else if (isFieldEmpty('check-in-datepicker')){
 		alert("please fill out check in date field");
 		return false;
-	} else if (isFieldEmpty('datepicker2')){
+	} else if (isFieldEmpty('check-out-datepicker')){
 		alert("please fill out check out date field");
 		return false;
 	} else {
-		return dateEvaluation('datepicker1','datepicker2');
+		return dateEvaluation('check-in-datepicker','check-out-datepicker');
 	}
 	
 }

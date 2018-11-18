@@ -1,5 +1,5 @@
  <?php
-
+include 'session.php';
 // php select option value from database
 
 $hostname = "localhost";

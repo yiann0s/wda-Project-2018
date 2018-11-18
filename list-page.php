@@ -1,10 +1,13 @@
 <?php
-$city_selection =  $_POST["City"];
-$room_type_selection = $_POST["Room-Type"];
-$check_in_date_selection = $_POST["check-in-date"];
+
+session_start();
+//HTML and PHP tags stripped from given vars
+$city_selection =  strip_tags($_POST["City"]);
+$room_type_selection = strip_tags($_POST["Room-Type"]);
+$check_in_date_selection = strip_tags($_POST["check-in-date"]);
 // $checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
 // $CID = $checkInDateTime;//->format('Y-m-d'); 
-$check_out_date_selection = $_POST["check-out-date"];
+$check_out_date_selection = strip_tags($_POST["check-out-date"]);
 // $checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
 // $COD = $checkOutDateTime->format('Y-m-d'); 
 
@@ -67,17 +70,7 @@ $city_result = mysqli_query($connection,$city_query);
 $room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
 $room_type_result = mysqli_query($connection,$room_type_query);
 
-
-if (isset($_POST['count-of-guests'])) {
-	$count_of_guests = $_POST['count-of-guests'];
-    if (isset($_POST['ajax'])) {
-        echo json_encode(array(
-           'count-of-guests' => ($count_of_guests),
-        ));
-        exit;
-    }
-}
-
+echo "In current session user id " . $_SESSION['user_id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +99,7 @@ if (isset($_POST['count-of-guests'])) {
 					<th>Photo</th>
 					<th>Area</th>
 					<th>Room type</th>
-					<th>COunt of guests</th>
+					<th>Count of guests</th>
 					<th>price</th>
 					<th>short_description</th>
 					
@@ -139,7 +132,7 @@ if (isset($_POST['count-of-guests'])) {
 			<div class="side">
 				<h3>FIND THE PERFECT HOTEL</h3>
 				<div>
-					<select name="Count-of-Guests" id="count-of-guests">
+					<select name="Count-of-Guests" id="count_of_guests">
 						<option value="" disabled selected>Count of Guests</option>
 						<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
 							<option <?php if ($room_type_selection == $row1[0]) echo "selected"; ?>><?php echo $row1[0];?></option>
@@ -147,7 +140,7 @@ if (isset($_POST['count-of-guests'])) {
 					</select>
 				</div>
 				<div>
-					<select name="Room-Type">
+					<select name="Room-Type" id="room_type">
 						<option value="" disabled selected>Room Type</option>
 						<?php while($room_type_row = mysqli_fetch_array($room_type_result)):;?>
 							<option <?php if ($room_type_selection == $room_type_row[0]) echo "selected"; ?>><?php echo $room_type_row[0];?></option>
@@ -155,7 +148,7 @@ if (isset($_POST['count-of-guests'])) {
 					</select>
 				</div>
 				<div>
-					<select name="City">
+					<select name="City" id="city">
 						<option value="" disabled selected>City</option>
 						<?php while($row2 = mysqli_fetch_array($city_result)):;?>
 							<option <?php if ($city_selection == $row2[0]) echo "selected"; ?>><?php echo $row2[0];?></option>
@@ -163,16 +156,17 @@ if (isset($_POST['count-of-guests'])) {
 					</select>
 				</div>
 				<div>
-					<input type="number" id="start-price" placeholder="from:" min="0" />
-					<input type="number" id="end-price" placeholder="to:" min="0"/>
+					<input type="number" id="start_price" placeholder="from:" min="0" />
+					<input type="number" id="end_price" placeholder="to:" min="0"/>
 				</div>
 				<div>
-					<input type="text" id="check-in-datepicker" placeholder="Check-in Date" value="<?php echo $check_in_date_selection; ?>">
+					<input type="text" id="check_in_datepicker" placeholder="Check-in Date" value="<?php echo $check_in_date_selection; ?>">
 				</div>
 				<div>
-					<input type="text" id="check-out-datepicker" placeholder="Check-out Date" value="<?php echo $check_out_date_selection; ?>">
+					<input type="text" id="check_out_datepicker" placeholder="Check-out Date" value="<?php echo $check_out_date_selection; ?>">
 				</div>
-				 <input type="button" id="ajax-btn" value="FIND HOTEL">
+				 <!-- <input type="button" id="ajax-btn" value="FIND HOTEL"> -->
+				 <input type="button" id="filter-btn" value="FIND HOTEL">
 			</div>
 		<div class="main">
 
@@ -211,9 +205,15 @@ if (isset($_POST['count-of-guests'])) {
 	<script src="scripts/jquery-ui.js"></script>
 	<script>
 	$(document).ready(function(){
-		$('#ajax-btn').on('click', function(event) {
+		$('#ajax-btn').on('click', function() {			
 			$.ajax({
-					url: "list-page.php",
+					type: "post",
+					url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+					//dataType:"json",
+					// data:{
+						// 'ajax':1,
+						// 'count-of-guests':$('#count-of-guests').val();
+					// },
 					success: function(){
 							$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
 					},
@@ -223,45 +223,6 @@ if (isset($_POST['count-of-guests'])) {
 			});
 		});
 
-		/*$('#ajax-btn').on('click', function(event) {
-			 event.preventDefault();
-			 dataString = $('#count-of-guests').val();
-			 $.ajax({
-				type: "post",
-				url: "list-page.php",
-				dataType:"json",
-				data: dataString,
-				success: function (response) {
-						$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
-
-				},
-				error: function (xhr,status,error) {
-					$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
-				}
-			})
-			return false;
-		});*/
-		
-		/*$('#ajax-btn').on('click', function() {
-			console.log($('#count-of-guests').val());
-			$.ajax({
-				type: "POST",
-				async: true,
-				url: "<?php echo $_SERVER['PHP_SELF']; ?>",
-				data: {
-					'count-of-guests': $('#count-of-guests').val(),
-					'ajax': 1
-				},
-				dataType: 'json',
-				success: function (result, status, xhr) {
-					// parseJQueryAjaxResponse(result);
-					$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
-				},
-				error: function (xhr,status,error) {
-					$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
-				}
-			});
-		});*/
 		function parseJQueryAjaxResponse(responseData) {
 			if ('isValidEmail' in responseData) {
 				if (responseData['isValidEmail']) {
@@ -274,6 +235,17 @@ if (isset($_POST['count-of-guests'])) {
 			}
 		}
 	
+	
+	
+		$('#filter-btn').on('click', function() {
+			console.log("my new filter has "+$('#count_of_guests').val()+" guests  and " + $('#room_type').val()+" :type in city "+$('#city').val() );
+			if (($('#start_price').val())&&($('#end_price').val())){
+				console.log("start_price and end_price are not empty");
+				
+			} else {
+				console.log("something's fishy");
+			}
+		});	
 	});
 </script>
 	<script>
@@ -283,7 +255,7 @@ if (isset($_POST['count-of-guests'])) {
 		values: [ 0, 500 ]
 	});
 	
-	$( "#check-in-datepicker" ).datepicker({
+	$( "#check_in_datepicker" ).datepicker({
 			inline: true,
 			dateFormat: "yy-mm-dd",
 			minDate: new Date(),
@@ -294,12 +266,12 @@ if (isset($_POST['count-of-guests'])) {
 				var endDate = new Date(selectedDate.getTime() + msecsInADay);
 
 			   //Set Minimum Date of check out date picker after check in date is selected
-				$("#check-out-datepicker").datepicker( "option", "minDate", endDate );
+				$("#check_out_datepicker").datepicker( "option", "minDate", endDate );
 
 			}
 		});
 
-		$( "#check-out-datepicker" ).datepicker({
+		$( "#check_out_datepicker" ).datepicker({
 			inline: true,
 			dateFormat: "yy-mm-dd",
 			minDate: new Date()

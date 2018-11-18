@@ -1,5 +1,6 @@
 functionality
-	implement ajax technology in list-page.php using ajax-test.php on my database query 
+	>push_back>implement ajax technology in list-page.php using ajax-test.php on my database query 
 security
+	sql injection 
 mvc
 index

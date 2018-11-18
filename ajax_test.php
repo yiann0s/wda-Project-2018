@@ -1,13 +1,19 @@
 <?php
 
 if (isset($_POST['email'])) {
-    $isValidEmail = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-    if (isset($_POST['ajax'])) {
-        echo json_encode(array(
-            'isValidEmail' => ($isValidEmail !== false),
-        ));
-        exit;
-    }
+    // $isValidEmail = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+	$email = $_POST['email'];
+	if (isset($_POST['another'])){
+		$another = $_POST['another'];
+		if (isset($_POST['ajax'])) {
+			echo json_encode(array(
+            'usermail' => ($email),
+			'anotherone'=> ($another),
+			));
+			exit;
+		}
+	}
+    
 }
 
 ?><!DOCTYPE html>
@@ -129,98 +135,15 @@ if (isset($_POST['email'])) {
         </script>
         
 		<script>
-		function isValidEmail(id) {
-			var emailField = document.getElementById(id);
-			var emailValue = emailField.value;
-			
-			if (emailValue.search('@') !== -1) {
-				return true;
-			} else {
-				emailField.style = "border: 1px solid red";
-				document.getElementById('messages').innerHTML = "<div class='error'>Your e-mail does not contain a @ character</div>";
-				return false;
-			}
-		}
-		function jqIsValidEmail(id) {
-			var $emailField = $('#' + id);
-			var emailValue = $emailField.val();
-			
-			if (emailValue.search('@') !== -1) {
-				return true;
-			} else {
-				$emailField.css({
-					"border": "1px solid red"
-				});
-				$('#messages').html("<div class='error'>Your e-mail does not contain a @ character</div>");
-				return false;
-			}
-		}
-		function jqIsValidUsername(id) {
-			var $usernameField = $('#' + id);
-			var usernameValue = $usernameField.val();
-			
-			if (usernameValue.search('@') !== -1) {
-				return true;
-			} else {
-				$emailField.css({
-					"border": "1px solid red"
-				});
-				$('#messages').html("<div class='error'>Your this username does not exist</div>");
-				return false;
-			}
-		}
-		function resetErrors(id) {
-			document.getElementById('messages').innerHTML = '';
-			document.getElementById(id).style = "border: initial initial initial";
-		}
+
 		function jqResetErrors(id) {
 			$('#messages').html('');
 			$('#' + id).css('border', '');
 		}
 		function initAjaxButtons() {
-		    initPureJSAjaxButton();
 		    initJQueryAjaxButton();
 		}
-		function initPureJSAjaxButton() {
-		    document.getElementById('ajax-btn-1').addEventListener('click', function() {
-		        var xmlhttp;
-			    var emailField = document.getElementById('email-field');
-			    var emailValue = emailField.value;
-		        
-		        if (window.XMLHttpRequest) {
-                    // code for modern browsers
-                    xmlhttp = new XMLHttpRequest();
-                } else {
-                    // code for old IE browsers
-                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                
-                xmlhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        parsePureJSAjaxResponse(this);
-                    } else {
-                        document.getElementById('messages').innerHTML = "<div class='error'>AJAX request failed.</div>";
-                    }
-                };
-                
-                xmlhttp.open("POST", "<?php echo $_SERVER['PHP_SELF']; ?>", true); // (method, URL, async)
-                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xmlhttp.send("ajax=1&email=" + emailValue); 
-		    });
-        }
-        function parsePureJSAjaxResponse(response) {
-            var responseData = JSON.parse(response.responseText);
-            
-            if ('isValidEmail' in responseData) {
-                if (responseData['isValidEmail']) {
-                    document.getElementById('messages').innerHTML = "<div class='success'>Your email is valid!</div>";
-                } else {
-                    document.getElementById('messages').innerHTML = "<div class='error'>Your email is invalid</div>";
-                }
-            } else {
-                document.getElementById('messages').innerHTML = "<div class='error'>Invalid AJAX response.</div>";
-            }
-        }
+		
         function initJQueryAjaxButton() {
             $('#ajax-btn-2').on('click', function() {
                 $.ajax({
@@ -229,21 +152,25 @@ if (isset($_POST['email'])) {
                     url: "<?php echo $_SERVER['PHP_SELF']; ?>",
                     data: {
                         'email': $('#jq-email-field').val(),
-                        'ajax': 1
+                        'ajax': 1,
+						'another': $('#jq-another-field').val(),
                     },
                     dataType: 'json',
-                    success: function (result, status, xhr) {
-                        parseJQueryAjaxResponse(result);
+                    //success: function (result, status, xhr) {
+						// $('#messages').html("<div style='color:green'>AJAX request succesful</div>");
+                        //parseJQueryAjaxResponse(result);
+					success: function(response){
+						$('#messages').text('name : ' + response);
                     },
                     error: function (xhr,status,error) {
-                        $('#messages').html("<div class='error'>AJAX request failed.</div>");
+                        $('#messages').html("<div style='color:red'>AJAX request failed.</div>");
                     }
                 });
             });
         }
         function parseJQueryAjaxResponse(responseData) {
-            if ('isValidEmail' in responseData) {
-                if (responseData['isValidEmail']) {
+            if ('usermail' in responseData) {
+                if (responseData['usermail']) {
                     $('#messages').html("<div class='success'>Your email is valid!</div>");
                 } else {
                     $('#messages').html("<div class='error'>Your email is invalid</div>");
@@ -260,65 +187,27 @@ if (isset($_POST['email'])) {
         </header>
         <main>
 			<div id="messages">
-			    <?php if (isset($isValidEmail) && !$isValidEmail) : ?>
-			    <div class="error">Your email is invalid.</div>
-			    <?php endif; ?>
 			    
-			    <?php if (isset($isValidEmail) && $isValidEmail) : ?>
-			    <div class="success">Your email is valid!</div>
-			    <?php endif; ?>
 			</div>
-			<form onsubmit="return isValidEmail('email-field')" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<fieldset>
-					<legend>Pure JS</legend>
-					<label for="email-field">Email:</label>
-					<input 
-					    type="text" 
-    					id="email-field" 
-					    name="email" 
-					    onfocus="resetErrors(this.id)" 
-					    value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>" 
-				    >
-				   
-					<input type="reset" id="reset-btn-1" name="reset" value="Reset">
-					<input type="submit" id="submit-btn-1" name="send" value="Submit">
-					<input type="button" id="ajax-btn-1" name="ajax" value="AJAX">
-				</fieldset>
-			</form>
-			<form onsubmit="return jqIsValidEmail('jq-email-field')" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<fieldset>
-					<legend>jQuery</legend>
-					<label for="email-field">Email:</label>
-					<input 
-					    type="text" 
-					    id="jq-email-field" 
-					    onfocus="jqResetErrors(this.id)" 
-					    name="email" 
-					    value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>" 
-				    >
-				   
-					<input type="reset" id="reset-btn-2" name="reset" value="Reset">
-					<input type="submit" id="submit-btn-2" name="send" value="Submit">
-					<input type="button" id="ajax-btn-2" name="ajax" value="AJAX">
-				</fieldset>
-			</form>
-			<form onsubmit="return jqIsValidUsername('jq-username')" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<fieldset>
-					<legend>jQuery</legend>
-					<label for="jq-username">Username:</label>
-					<input 
-					    type="text" 
-					    id="jq-username" 
-					    onfocus="jqResetErrors(this.id)" 
-					    name="username" 
-					    value="<?php if (isset($_POST['username'])) { echo $_POST['username']; } ?>" 
-				    >
-				   
-					<input type="reset" id="reset-btn-3" name="reset" value="Reset">
-					<input type="submit" id="submit-btn-3" name="send" value="Submit">
-					<input type="button" id="ajax-btn-3" name="ajax" value="AJAX">
-				</fieldset>
-			</form>
+			<fieldset>
+				<legend>jQuery</legend>
+				<label for="email-field">Email:</label>
+				<input 
+					type="text" 
+					id="jq-email-field" 
+					onfocus="jqResetErrors(this.id)" 
+					name="email" 
+					value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>" 
+				>
+				<input 
+					type="text" 
+					id="jq-another-field" 
+					onfocus="jqResetErrors(this.id)" 
+					name="another" 
+					value="<?php if (isset($_POST['another'])) { echo $_POST['another']; } ?>" 
+				>
+				<input type="button" id="ajax-btn-2" name="ajax" value="AJAX">
+			</fieldset>
         </main>
         <footer>
             <span class="credits">Coded by George Filippakis &middot; &copy; CollegeLink</span>

@@ -31,7 +31,7 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<link href="styles/style.css" rel="stylesheet" type="text/css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
 	<script src="scripts/customJSscripts.js"></script>
-	<body>
+	<body">
 		<div class="welcome-navbar">
 			<a href="#">Hotels</a> 
 			<a class="active" href="#home"><i class="fa fa-fw fa-home"></i>Home</a> 

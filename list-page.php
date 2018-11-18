@@ -67,6 +67,17 @@ $city_result = mysqli_query($connection,$city_query);
 $room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
 $room_type_result = mysqli_query($connection,$room_type_query);
 
+
+if (isset($_POST['count-of-guests'])) {
+	$count_of_guests = $_POST['count-of-guests'];
+    if (isset($_POST['ajax'])) {
+        echo json_encode(array(
+           'count-of-guests' => ($count_of_guests),
+        ));
+        exit;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,13 +89,14 @@ $room_type_result = mysqli_query($connection,$room_type_query);
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
 </head>
+
 <body>
 	<?php print_r($_POST); ?>
 	<div ><?php echo $city_selection; ?></div>
 	<div ><?php echo $room_type_selection; ?></div>
 	<div ><?php echo "check in date unformatted ".$check_in_date_selection; ?></div>
 	<div ><?php echo "check out date unformatted ".$check_out_date_selection; ?></div>
-	
+	<div id="messages"></div>
 	<div>	<?php	if (count($table_data) > 0) {?>
 			<table>
 				<tr>
@@ -124,44 +136,44 @@ $room_type_result = mysqli_query($connection,$room_type_query);
 		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
 	<div class="row">
-		<div class="side">
-			<h3>FIND THE PERFECT HOTEL</h3>
-			<div>
-				<select name="Count-of-Guests">
-					<option value="" disabled selected>Count of Guests</option>
-					<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
-						<option <?php if ($room_type_selection == $row1[0]) echo "selected"; ?>><?php echo $row1[0];?></option>
-					<?php endwhile;?>
-				</select>
+			<div class="side">
+				<h3>FIND THE PERFECT HOTEL</h3>
+				<div>
+					<select name="Count-of-Guests" id="count-of-guests">
+						<option value="" disabled selected>Count of Guests</option>
+						<?php while($row1 = mysqli_fetch_array($guests_result)):;?>
+							<option <?php if ($room_type_selection == $row1[0]) echo "selected"; ?>><?php echo $row1[0];?></option>
+						<?php endwhile;?>
+					</select>
+				</div>
+				<div>
+					<select name="Room-Type">
+						<option value="" disabled selected>Room Type</option>
+						<?php while($room_type_row = mysqli_fetch_array($room_type_result)):;?>
+							<option <?php if ($room_type_selection == $room_type_row[0]) echo "selected"; ?>><?php echo $room_type_row[0];?></option>
+						<?php endwhile;?>
+					</select>
+				</div>
+				<div>
+					<select name="City">
+						<option value="" disabled selected>City</option>
+						<?php while($row2 = mysqli_fetch_array($city_result)):;?>
+							<option <?php if ($city_selection == $row2[0]) echo "selected"; ?>><?php echo $row2[0];?></option>
+						<?php endwhile;?>
+					</select>
+				</div>
+				<div>
+					<input type="number" id="start-price" placeholder="from:" min="0" />
+					<input type="number" id="end-price" placeholder="to:" min="0"/>
+				</div>
+				<div>
+					<input type="text" id="check-in-datepicker" placeholder="Check-in Date" value="<?php echo $check_in_date_selection; ?>">
+				</div>
+				<div>
+					<input type="text" id="check-out-datepicker" placeholder="Check-out Date" value="<?php echo $check_out_date_selection; ?>">
+				</div>
+				 <input type="button" id="ajax-btn" value="FIND HOTEL">
 			</div>
-			<div>
-				<select name="Room-Type">
-					<option value="" disabled selected>Room Type</option>
-					<?php while($room_type_row = mysqli_fetch_array($room_type_result)):;?>
-						<option <?php if ($room_type_selection == $room_type_row[0]) echo "selected"; ?>><?php echo $room_type_row[0];?></option>
-					<?php endwhile;?>
-				</select>
-			</div>
-			<div>
-				<select name="City">
-					<option value="" disabled selected>City</option>
-					<?php while($row2 = mysqli_fetch_array($city_result)):;?>
-						<option <?php if ($city_selection == $row2[0]) echo "selected"; ?>><?php echo $row2[0];?></option>
-					<?php endwhile;?>
-				</select>
-			</div>
-			<div>
-				<input type="number" id="start-price" placeholder="from:" min="0" />
-				<input type="number" id="end-price" placeholder="to:" min="0"/>
-			</div>
-			<div>
-				<input type="text" id="check-in-datepicker" placeholder="Check-in Date" value="<?php echo $check_in_date_selection; ?>">
-			</div>
-			<div>
-				<input type="text" id="check-out-datepicker" placeholder="Check-out Date" value="<?php echo $check_out_date_selection; ?>">
-			</div>
-			 <input type="submit" value="FIND HOTEL">
-		</div>
 		<div class="main">
 
 				<h2>Search Results</h2>
@@ -197,6 +209,73 @@ $room_type_result = mysqli_query($connection,$room_type_query);
 	</div> 
 	<script src="scripts/jquery.js"></script>
 	<script src="scripts/jquery-ui.js"></script>
+	<script>
+	$(document).ready(function(){
+		$('#ajax-btn').on('click', function(event) {
+			$.ajax({
+					url: "list-page.php",
+					success: function(){
+							$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
+					},
+					error: function(){
+							$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
+					}
+			});
+		});
+
+		/*$('#ajax-btn').on('click', function(event) {
+			 event.preventDefault();
+			 dataString = $('#count-of-guests').val();
+			 $.ajax({
+				type: "post",
+				url: "list-page.php",
+				dataType:"json",
+				data: dataString,
+				success: function (response) {
+						$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
+
+				},
+				error: function (xhr,status,error) {
+					$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
+				}
+			})
+			return false;
+		});*/
+		
+		/*$('#ajax-btn').on('click', function() {
+			console.log($('#count-of-guests').val());
+			$.ajax({
+				type: "POST",
+				async: true,
+				url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+				data: {
+					'count-of-guests': $('#count-of-guests').val(),
+					'ajax': 1
+				},
+				dataType: 'json',
+				success: function (result, status, xhr) {
+					// parseJQueryAjaxResponse(result);
+					$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
+				},
+				error: function (xhr,status,error) {
+					$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
+				}
+			});
+		});*/
+		function parseJQueryAjaxResponse(responseData) {
+			if ('isValidEmail' in responseData) {
+				if (responseData['isValidEmail']) {
+					$('#messages').html("<div class='success'>Your email is valid!</div>");
+				} else {
+					$('#messages').html("<div class='error'>Your email is invalid</div>");
+				}
+			} else {
+				$('#messages').html("<div class='error'>Invalid AJAX response.</div>");
+			}
+		}
+	
+	});
+</script>
 	<script>
 
 	$( "#slider" ).slider({

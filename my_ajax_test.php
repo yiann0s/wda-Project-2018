@@ -24,13 +24,17 @@
 					// code for IE6, IE5
 					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 				}
+				
+				var data = new FormData();
+				data.append('selected_value',$('#selection-value').val());
+				
 				xmlhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
 						document.getElementById("txtHint").innerHTML = this.responseText;
 					}
 				};
-				xmlhttp.open("GET","get_user.php?q="+$('#selection-value').val(),true);
-				xmlhttp.send();
+				xmlhttp.open("POST","get_user.php",true);
+				xmlhttp.send(data);
 			}
 		});
 	});
@@ -48,7 +52,7 @@
 	<input type="button" id="my-btn" value="Show">
 </form>
 <br>
-<div id="txtHint"><b>Person info will be listed here...</b></div>
+<div id="txtHint"></div>
 
 </body>
 </html>

@@ -18,30 +18,23 @@ th {text-align: left;}
 <body>
 
 <?php
-$q = intval($_GET['q']);
+$q = intval($_POST['selected_value']);
+$city_selection = "Athens";
 
 $con = mysqli_connect('localhost','wda2018','123456','wda2018');
 if (!$con) {
     die('Could not connect: ' . mysqli_error($con));
 }
 
-$sql="SELECT * FROM user WHERE user_id = '".$q."'";
+$sql="SELECT * FROM room WHERE room_id = '".$q."' AND city = '".$city_selection."'";
 $result = mysqli_query($con,$sql);
 
-echo "<table>
-<tr>
-<th>User ID</th>
-<th>Username</th>
-<th>Email</th>
-</tr>";
+$string = "<table><tr><th>Room ID</th><th>name</th><th>city</th></tr>";
 while($row = mysqli_fetch_array($result)) {
-    echo "<tr>";
-    echo "<td>" . $row['user_id'] . "</td>";
-    echo "<td>" . $row['username'] . "</td>";
-    echo "<td>" . $row['email'] . "</td>";
-    echo "</tr>";
+    $string  = $string."<tr><td>".$row['room_id']."</td><td>".$row['name']."</td><td>".$row['city']."</td></tr>";
 }
-echo "</table>";
+$string = $string."</table>";
+echo $string;
 mysqli_close($con);
 ?>
 </body>

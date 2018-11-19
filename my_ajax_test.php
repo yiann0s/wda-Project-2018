@@ -9,44 +9,46 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
-  $( function() {
-    var dateFormat = "mm/dd/yy",
-      from = $( "#from" )
-        .datepicker({
-          defaultDate: "+1w",
-          changeMonth: true,
-        })
-        .on( "change", function() {
-          to.datepicker( "option", "minDate", getDate( this ) );
-        }),
-      to = $( "#to" ).datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-      })
-      .on( "change", function() {
-        from.datepicker( "option", "maxDate", getDate( this ) );
-      });
- 
-    function getDate( element ) {
-      var date;
-      try {
-        date = $.datepicker.parseDate( dateFormat, element.value );
-      } catch( error ) {
-        date = null;
-      }
- 
-      return date;
-    }
-  } );
+	$(document).ready(function(){
+		$("#my-btn").on("click", function(){
+			// console.log("value selected: "+$('#selection-value').val());
+			//$('#message').html("<div style='color:green'>The value was "+$('#selection-value').val()+"</div>");
+			if ($('#selection-value').val() == "") {
+				$('#message').html("<div style='color:red'>The value was empty</div>");
+				return;
+			} else {
+				if (window.XMLHttpRequest) {
+					// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				} else {
+					// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						document.getElementById("txtHint").innerHTML = this.responseText;
+					}
+				};
+				xmlhttp.open("GET","get_user.php?q="+$('#selection-value').val(),true);
+				xmlhttp.send();
+			}
+		});
+	});
   </script>
 </head>
 <body>
- 
-<label for="from">From</label>
-<input type="text" id="from" name="from">
-<label for="to">to</label>
-<input type="text" id="to" name="to">
- 
- 
+<form>
+	<select id="selection-value"">
+		<option value="" disabled selected>Select a number:</option>
+		<option value="1">One</option>
+		<option value="2">Two</option>
+		<option value="3">Three</option>
+		<option value="4">Four</option>
+	</select>
+	<input type="button" id="my-btn" value="Show">
+</form>
+<br>
+<div id="txtHint"><b>Person info will be listed here...</b></div>
+
 </body>
 </html>

@@ -19,6 +19,7 @@ th {text-align: left;}
 
 <?php
 $q = intval($_POST['selected_value']);
+
 $city_selection = "Athens";
 
 $con = mysqli_connect('localhost','wda2018','123456','wda2018');

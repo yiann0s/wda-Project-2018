@@ -221,30 +221,13 @@ echo "In current session user id " . $_SESSION['user_id'];
 				dataType: "JSON",
 				success: function (jsonStr) {
 					console.log("it's sucessful");
-					$("#first-results").html("<h2>Search Results</h2><div class='search-result-row'><div class='search-result-side'><img/><div class='per-night'/></div><div class='search-result-main'><div class='main-right-side' ><h3></h3><h4></h4><div></div><form action='\wdaProject2018\room-page.php' method='post'><input type='hidden' name='roomId' ><input type='submit' name='submit' value='Go to Hotel Page'></form></div><div class='extra-info'><div></div></div></div></div>");
-					$("#first-results").css({
-						'display': 'flex',
-						'flex-wrap': 'wrap',
-					});
-					$("#first-results").find(".search-result-row").css({
-							'flex': '80%',
-							'background-color': 'green',
-							'padding': '20px'
-					});
-
-					$("#first-results").find(".search-result-side").css ({
-						'flex': '30%',
-						'background-color': 'yellow',
-					});
-					$("#first-results").find(".search-result-main").css ({
-						'flex': '70%',
-						'background-color': 'red',
-					});
+					$("#first-results").html("<h2>Search Results</h2>");
 					for (var i = 0; i < jsonStr.length; i++) {
 						console.log("city: "+jsonStr[i].city
 						+",guests:" +jsonStr[i].count_of_guests+
 						",room id:" + jsonStr[i].room_id + ",photo:"+jsonStr[i].photo+",name:"+jsonStr[i].name+
 						",room type:"+jsonStr[i].room_type + ",price:"+jsonStr[i].price+",short description:"+jsonStr[i].short_description);
+						
 					}
 				},
 				error: function( req, status, err ) {

@@ -1,13 +1,10 @@
 <?php
+include 'session.php';
+include 'db_credentials.php';
 include 'custom_functions.php';
 
 $room_id =  $_POST["roomId"];
-$current_user_id = "1";
-
-$hostname = "localhost";
-$username = "wda2018";
-$password = "123456";
-$databaseName = "wda2018";
+$current_user_id = $_SESSION["user_id"];
 
 // Create connection
 $connection = new mysqli($hostname, $username, $password, $databaseName);
@@ -16,7 +13,7 @@ if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 } 
 
-$room_extended_info_query = $connection->prepare("SELECT r.photo,r.name,r.city,r.area,r.count_of_guests,r.price,r.long_description,rt.room_type
+$room_extended_info_query = $connection->prepare("SELECT r.photo,r.name,r.city,r.area,r.lat_location,r.lng_location,r.parking,r.wifi,r.pet_friendly,r.count_of_guests,r.price,r.long_description,rt.room_type
 FROM `room` AS r,`room_type` AS rt
 WHERE r.room_id =  ? AND r.room_type = rt.id ");
 
@@ -89,7 +86,11 @@ if($favorite_result->num_rows === 0){
 	}
 	$favorite_msg = "there are ".$favoriteCount." results";
 }
-
+// $message = "";
+// if(isset($_POST['reviewSubmit'])){ //check if form was submitted
+  // $input = $_POST['reviewText']; //get input text
+  // $message = "Success! You entered: ".$input;
+// } 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,100 +105,71 @@ if($favorite_result->num_rows === 0){
 	 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 </head>
 <body>
-	<?php 	echo "extended room info msg:".$room_extended_info_message;
-			echo ", Selected room id = ".$room_id;
-			echo ", user review msg:".$user_review_message;
-			echo ", avg reviews msg:".$avg_reviews_msg;
-			?>
+	<?php 	//echo "extended room info msg:".$room_extended_info_message; echo ", Selected room id = ".$room_id; echo ", user review msg:".$user_review_message; echo ", avg reviews msg:".$avg_reviews_msg;?>
 	<div class="room-page-navbar">
 		<a  href="#">Hotels</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-user"></i>Profile</a>
-		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
+		<a href="index.php" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
-	<div>	
-		<?php	if (count($room_extended_info_table) > 0) {?>
-			<table>
-				<tr>
-					<th>Photo</th>
-					<th>Name</th>
-					<th>City</th>
-					<th>Area</th>
-					<th>Room type</th>
-					<th>Count of guests</th>
-					<th>price</th>
-					<th>long description</th>
-					
-				</tr>
+	<div style="display: none;"><?php	if (count($room_extended_info_table) > 0) {?>
 				<?php	foreach ($room_extended_info_table as $room_extended_info_row) { ?>
-				<tr>
-					<td><?php echo $room_extended_info_row['photo']; ?></td>
-					<td><?php echo $room_extended_info_row['name']; ?></td>
-					<td><?php echo $room_extended_info_row['city']; ?></td>
-					<td><?php echo $room_extended_info_row['photo']; ?></td>
-					<td><?php echo $room_extended_info_row['area']; ?></td>
-					<td><?php echo $room_extended_info_row['room_type']; ?></td>
-					<td><?php echo $room_extended_info_row['count_of_guests']; ?></td>
-					<td><?php echo $room_extended_info_row['price']; ?></td>
-					<td><?php echo $room_extended_info_row['long_description']; ?></td>
-				</tr>
+					<?php echo $room_extended_info_row['photo']; ?>
+					<?php echo $room_extended_info_row['name']; ?>
+					<?php echo $room_extended_info_row['city']; ?>
+					<?php echo $room_extended_info_row['photo']; ?>
+					<?php echo $room_extended_info_row['area']; ?>
+					<?php echo $room_extended_info_row['room_type']; ?>
+					<?php echo $room_extended_info_row['count_of_guests']; ?>
+					<?php echo $room_extended_info_row['price']; ?></td>
+					<?php echo $room_extended_info_row['long_description']; ?>
+					<?php echo $room_extended_info_row['lat_location']; ?>
+					<?php echo $room_extended_info_row['lng_location']; ?>
+					<?php echo $room_extended_info_row['parking']; ?>
+					<?php echo $room_extended_info_row['wifi']; ?>
+					<?php echo $room_extended_info_row['pet_friendly']; ?>
 				<?php	} ?>
-			</table>
 		<?php	}	?>
-		<?php	if (count($avg_reviews_table) > 0) {?>
-			<table>
-				<tr>
-					<th>Avg rating</th>
-				</tr>
-				<?php	foreach ($avg_reviews_table as $avg_reviews_row) { ?>
-				<tr>
-				<?php $avg = $avg_reviews_row[0].$avg_reviews_row[1].$avg_reviews_row[2]; ?>
-				<?php $avg = "3.15"; ?>
-				<!-- round(x,y,PHP_ROUND_HALF_UP) round up to 1 decimal e.g 3.14 converts to 3.1 and 3.14 to 3.2 -->
-				<td><?php echo round(floatval($avg),1,PHP_ROUND_HALF_UP); ?></td>
-				</tr>
-				<?php	} ?>
-			</table>
-		<?php	}	?>
-		<?php	if (count($favorite_table) > 0) {?>
-			<table>
-				<tr>
-					<th>Favorite?</th>
-				</tr>
-				<tr>
-					<td><?php 	if ( array_values($favorite_table)[0] == 1 ){
-									echo "true";
-								} else {
-									echo "false";
-								}
-						?>
-					</td>
-				</tr>
-			</table>
-		<?php	}	?>
+		<?php	if (count($avg_reviews_table) > 0) {
+					foreach ($avg_reviews_table as $avg_reviews_row) { 
+						$avg = $avg_reviews_row[0].$avg_reviews_row[1].$avg_reviews_row[2]; 
+					}
+					//round(x,y,PHP_ROUND_HALF_UP) round up to 1 decimal e.g 3.14 converts to 3.1 and 3.14 to 3.2
+					$rounded_avg = round(floatval($avg),1,PHP_ROUND_HALF_UP);	
+				}	
+		?>
+		<?php	if (count($favorite_table) > 0) {
+					if ( array_values($favorite_table)[0] == 1 ){
+						$isFavorite = "true";
+					} else {
+						$isFavorite = "false";
+					}	
+			}	
+		?>
 	</div>
 	<div class="hotel-info-top-bar">
-		<div>Athens, Syntagma</div>
-		<div>Reviews:</div>
-		<div>stars</div>
-		<div>heart</div>
-		<div id="per-night">Per Night: 500E</div>
+		<div><?php echo $room_extended_info_row['name']; ?></div>
+		<div><?php echo $room_extended_info_row['city'].", ".$room_extended_info_row['area']; ?></div>
+		<div><?php echo "Ratings:".$rounded_avg."/5"?></div>
+		<div><?php echo "Is this your favorite? ".$isFavorite?></div>
+		<div id="per-night"><?php echo "Per Night: ".$room_extended_info_row['price']; ?></div>
 	</div>
 	<div>
-		<div class="fakeimg" style="height:200px;">Image</div>
+		<!-- <div class="fakeimg" style="height:200px;" src="">Image</div> -->
+		<?php echo '<img style="height:200px;" src="/wdaProject2018/images/rooms/'.$room_extended_info_row['photo'].'"/>'; ?>
 	</div>
 	<div class="hotel-info-mid-bar">
-		<a >COUNT OF GUESTS</a> 
-		<a >TYPE OF ROOM</a> 
-		<a >PARKING</a> 
-		<a >WIFI</a>
-		<a >PET FRIENDLY</a>
+		<a >COUNT OF GUESTS: <?php echo $room_extended_info_row['count_of_guests']; ?></a> 
+		<a >TYPE OF ROOM: <?php echo $room_extended_info_row['room_type']; ?></a> 
+		<a >PARKING: <?php echo $hasParking = ($room_extended_info_row['parking'] === 1) ? "Yes" : "No" ;  ?></a> 
+		<a >WIFI: <?php echo $hasParking = ($room_extended_info_row['wifi'] === 1) ? "Yes" : "No" ;  ?></a>
+		<a >PET FRIENDLY: <?php echo $hasParking = ($room_extended_info_row['pet_friendly'] === 1) ? "Yes" : "No" ;  ?></a>
 	</div>	
 	<div class="hotel-room-description">
-	<h5>Room Description</h5>
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida massa id enim egestas, nec tristique quam pellentesque. Integer consectetur eleifend vehicula. Ut a scelerisque leo
+		<h5>Room Description</h5>
+		<?php echo $room_extended_info_row['long_description']; ?>
 	</div>
 	<div class="isBooked">
-	isBooked?
+		isBooked?
 	</div>
 	<div>
 		<div id="googleMap" style="width:100%;height:100px;"></div>
@@ -208,10 +180,10 @@ if($favorite_result->num_rows === 0){
 		<?php	if (count($user_review_table) > 0) {?>
 			<table>
 				<tr>
-					<th>date created</th>
-					<th>rate</th>
-					<th>text</th>
-					<th>username</th>
+					<th>Date created</th>
+					<th>Rating</th>
+					<th>Comments</th>
+					<th>Username</th>
 				</tr>
 				<?php	foreach ($user_review_table as $user_review_row) { ?>
 				<tr>
@@ -228,29 +200,29 @@ if($favorite_result->num_rows === 0){
 	<div id="add-review">
 		<h5>Add Review</h5>
 		<div>Stars</div>
-		<div class="rating">
-			<label>
-			<input type="radio" name="rating" value="1" title="1 star"> 1
-			</label>
-			<label>
-			<input type="radio" name="rating" value="2" title="2 stars"> 2
-			</label>
-			<label>
-			<input type="radio" name="rating" value="3" title="3 stars"> 3
-			</label>
-			<label>
-			<input type="radio" name="rating" value="4" title="4 stars"> 4
-			</label>
-			<label>
-			<input type="radio" name="rating" value="5" title="5 stars"> 5
-			</label>
-		</div>
-			<textarea rows="2" cols="60">
-			At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
-			</textarea>
-		<div>
-		<input type="submit" value="Submit">
-		</div>
+		<form action="" method="post" id="review-form">
+			<div class="rating">
+				<label>
+				<input type="radio" name="rating" value="1" title="1 star"> 1
+				</label>
+				<label>
+				<input type="radio" name="rating" value="2" title="2 stars"> 2
+				</label>
+				<label>
+				<input type="radio" name="rating" value="3" title="3 stars"> 3
+				</label>
+				<label>
+				<input type="radio" name="rating" value="4" title="4 stars"> 4
+				</label>
+				<label>
+				<input type="radio" name="rating" value="5" title="5 stars"> 5
+				</label>
+			</div>
+			<textarea rows="2" cols="60" form="review-form" name="reviewText">Enter text here...</textarea>
+			<div>
+				<input type="submit" value="Submit" name="reviewSubmit">
+			</div>
+		</form>
 	</div>
 
 	<div class="footer">
@@ -258,16 +230,17 @@ if($favorite_result->num_rows === 0){
 	</div> 
 	<script>
 	function myMap() {
-
-	var athens = {lat: 37.983810, lng: 23.727539};
+	var myLat = <?php echo floatval($room_extended_info_row['lat_location']);?>;
+	var myLng = <?php echo floatval($room_extended_info_row['lng_location']);?>;
+	var room_location = {lat:myLat , lng: myLng};
 
 	var mapProp= {
-		center:athens,
+		center:room_location,
 		zoom:15,
 	};
 	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
 
-	 var marker = new google.maps.Marker({position: athens, map: map});
+	 var marker = new google.maps.Marker({position: room_location, map: map});
 
 	}
 	</script>

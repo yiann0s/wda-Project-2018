@@ -1,15 +1,6 @@
  <?php
 include 'session.php';
-// php select option value from database
-
-$hostname = "localhost";
-$username = "wda2018";
-$password = "123456";
-$databaseName = "wda2018";
-
-///ena sxolioo 2
-// ena sxolio 3 
-// connect to mysql database
+include 'db_credentials.php';
 
 $connect = mysqli_connect($hostname, $username, $password, $databaseName);
 

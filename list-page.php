@@ -1,20 +1,13 @@
 <?php
 
-session_start();
+include 'session.php';
+include 'db_credentials.php';
+
 //HTML and PHP tags stripped from given vars
 $city_selection =  strip_tags($_POST["City"]);
 $room_type_selection = strip_tags($_POST["Room-Type"]);
 $check_in_date_selection = strip_tags($_POST["check-in-date"]);
-// $checkInDateTime = DateTime::createFromFormat('j/n/Y', $check_in_date_selection);
-// $CID = $checkInDateTime;//->format('Y-m-d'); 
 $check_out_date_selection = strip_tags($_POST["check-out-date"]);
-// $checkOutDateTime = DateTime::createFromFormat('j/n/Y', $check_out_date_selection);
-// $COD = $checkOutDateTime->format('Y-m-d'); 
-
-$hostname = "localhost";
-$username = "wda2018";
-$password = "123456";
-$databaseName = "wda2018";
 
 // Create connection
 $connection = new mysqli($hostname, $username, $password, $databaseName);
@@ -70,7 +63,7 @@ $city_result = mysqli_query($connection,$city_query);
 $room_type_query = "SELECT room_type FROM `room_type` ORDER BY `room_type`.`id` ASC";
 $room_type_result = mysqli_query($connection,$room_type_query);
 
-echo "In current session user id " . $_SESSION['user_id'];
+//echo "In current session user id " . $_SESSION['user_id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,51 +75,11 @@ echo "In current session user id " . $_SESSION['user_id'];
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="styles/jquery-ui.css" rel="stylesheet">
 </head>
-
 <body>
-	<?php print_r($_POST); ?>
-	<div ><?php echo $city_selection; ?></div>
-	<div ><?php echo $room_type_selection; ?></div>
-	<div ><?php echo "check in date unformatted ".$check_in_date_selection; ?></div>
-	<div ><?php echo "check out date unformatted ".$check_out_date_selection; ?></div>
-	<div id="messages"></div>
-	<div>	<?php	if (count($table_data) > 0) {?>
-			<table>
-				<tr>
-					<th>Room ID</th>
-					<th>Name</th>
-					<th>City</th>
-					<th>Photo</th>
-					<th>Area</th>
-					<th>Room type</th>
-					<th>Count of guests</th>
-					<th>price</th>
-					<th>short_description</th>
-					
-				</tr>
-				<?php	foreach ($table_data as $row) { ?>
-				<tr>
-					<td><?php echo $row['room_id']; ?></td>
-					<td><?php echo $row['name']; ?></td>
-					<td><?php echo $row['city']; ?></td>
-					<td><?php echo $row['photo']; ?></td>
-					<td><?php echo $row['area']; ?></td>
-					<td><?php echo $row['room_type']; ?></td>
-					<td><?php echo $row['count_of_guests']; ?></td>
-					<td><?php echo $row['price']; ?></td>
-					<td><?php echo $row['short_description']; ?></td>
-				</tr>
-				<?php	} ?>
-			</table>
-		<?php	}	?>
-	</div>
-	<div>
-		<?php echo "results of statmtnt ".$message;?>
-	</div>
 	<div class="list-page-navbar">
 		<a class="active" href="#">Hotels</a>
 		<a href="#" class="right"><i class="fa fa-fw fa-user"></i>Profile</a>
-		<a href="#" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
+		<a href="index.php" class="right"><i class="fa fa-fw fa-home"></i>Home</a>
 	</div>
 	<div class="row">
 			<div class="side">
@@ -229,6 +182,7 @@ echo "In current session user id " . $_SESSION['user_id'];
 						",room type:"+jsonStr[i].room_type + ",price:"+jsonStr[i].price+",short description:"+jsonStr[i].short_description);
 						
 					}
+					alert("ajax query has returned "+jsonStr.length+ " results");
 				},
 				error: function( req, status, err ) {
 					console.log( 'something went wrong', status, err );

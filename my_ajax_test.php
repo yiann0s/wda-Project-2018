@@ -50,8 +50,11 @@
 		<option value="4">Four</option>
 	</select>
 	<input type="button" id="my-btn" value="Show">
+	
 </form>
 <br>
+
+<table><tr><th>Room ID</th><th>name</th><th>city</th></tr></table>
 <div id="txtHint"></div>
 
 </body>

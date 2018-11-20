@@ -1,20 +1,3 @@
-<?php
-    if(isset($_POST["message"])){
-		$message      = $_POST["message"];
-		$firstName   = $_POST["firstName"];
-		$lastName    = $_POST["lastName"];
-		$email       = $_POST["email"];
-        $data = array(
-            "User message"     => $message,
-            "User firstName"  => $firstName,
-            "User lastName"   => $lastName,
-            "User email"      => $email
-        );
-        echo json_encode($data);
-    } else {
-		echo "post message is not set";
-	}
-?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -28,18 +11,16 @@
   <script>
      $(document).ready(function() {
 
-            $("#submit").click(function(){
+            $("#submit").on('click',function(){
 			console.log("onclick called");
             $.ajax({
-            //url: "post.php",
-			url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+            url: "post.php",
 			async: true,
             type: "POST",
             data: {
-                message: $("#message").val(),
-                firstName: $("#firstName").val(),
-                lastName: $("#lastName").val(),
-                email: $("#email").val()
+                city: $("#city").val(),
+                guest_count: $("#guest-count").val(),
+                name: $("#name").val(),
             },
             dataType: "JSON",
             success: function (jsonStr) {
@@ -54,12 +35,11 @@
     </head>
     <body>
     <h1>jQuery Ajax Jason example</h1>
-	<form name="contact" id="contact" method="post">
-	 Message : <textarea name="message" id="message"></textarea><br/>
-	 firstName : <input type="text" name="firstName" id="firstName"/><br/>
-	 lastName : <input type="text" name="lastName" id="lastName"/><br/>
-	 email : <input type="text" name="email" id="email"/><br/>
-	<input type="button" value="Submit" name="submit" id="submit"/>
+	<form name="contact" id="contact" >
+		 City : <input type="text" name="cityName" id="city"/><br/>
+		 Guest Count : <input type="text" name="guestCount" id="guest-count"/><br/>
+		 Name : <input type="text" name="roomName" id="name"/><br/>
+		<input type="button" value="Submit" name="submit" id="submit"/>
 	</form>
 	<div id="result"></div>
     </body>

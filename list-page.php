@@ -168,20 +168,18 @@ echo "In current session user id " . $_SESSION['user_id'];
 				 <!-- <input type="button" id="ajax-btn" value="FIND HOTEL"> -->
 				 <input type="button" id="filter-btn" value="FIND HOTEL">
 			</div>
-		<div class="main">
-
+		<div class="main" id="first-results">
 				<h2>Search Results</h2>
 				<?php	foreach ($table_data as $row) { ?>
 				<div class="search-result-row">
 					<div class="search-result-side">
-						<!--<div class="fakeimg" style="height:200px;"><?php //echo $row['photo']; ?></div> -->
-						<?php echo '<img src="/wdaProject2018/images/rooms/'.$row['photo'].'"/>'; ?>
+						<?php echo '<img style="height:100px;width:100px;" src="/wdaProject2018/images/rooms/'.$row['photo'].'"/>'; ?>
 						<div class="per-night" ><?php echo "Per night: ".$row['price']; ?></div>
 					</div>
 					<div class="search-result-main">
 						<div class="main-right-side" >
-							<h3><?php echo $row['name']; ?></h4>
-							<h4><?php echo $row['city'].", ".$row['area']; ?></h5>
+							<h3><?php echo $row['name']; ?></h3>
+							<h4><?php echo $row['city'].", ".$row['area']; ?></h4>
 							<div><?php echo $row['short_description']; ?></div>
 							<?php $ID = $row['room_id'];?>
 								<form action="\wdaProject2018\room-page.php" method="post">
@@ -204,50 +202,59 @@ echo "In current session user id " . $_SESSION['user_id'];
 	<script src="scripts/jquery.js"></script>
 	<script src="scripts/jquery-ui.js"></script>
 	<script>
-	$(document).ready(function(){
-		$('#ajax-btn').on('click', function() {			
+	$(document).ready(function() {
+		$("#filter-btn").on('click',function(){
+			console.log("onclick called, room type " + $("#room_type").val());
 			$.ajax({
-					type: "post",
-					url: "<?php echo $_SERVER['PHP_SELF']; ?>",
-					//dataType:"json",
-					// data:{
-						// 'ajax':1,
-						// 'count-of-guests':$('#count-of-guests').val();
-					// },
-					success: function(){
-							$('#messages').html("<div class='error' style='color:green;'>AJAX request succesful</div>");
-					},
-					error: function(){
-							$('#messages').html("<div class='error' style='color:red;'>AJAX request failed.</div>");
+				url: "post.php",
+				async: true,
+				type: "POST",
+				data: {
+					city: 			$('#city').val(),
+					guest_count: 		$('#count_of_guests').val(),
+					room_type: 		$("#room_type").val(),
+					check_in_date: 	$("#check_in_datepicker").val(),
+					check_out_date: 	$("#check_out_datepicker").val(),
+					start_price: 			$("#start_price").val(),
+					end_price: 				$("#end_price").val(),
+				},
+				dataType: "JSON",
+				success: function (jsonStr) {
+					console.log("it's sucessful");
+					$("#first-results").html("<h2>Search Results</h2><div class='search-result-row'><div class='search-result-side'><img/><div class='per-night'/></div><div class='search-result-main'><div class='main-right-side' ><h3></h3><h4></h4><div></div><form action='\wdaProject2018\room-page.php' method='post'><input type='hidden' name='roomId' ><input type='submit' name='submit' value='Go to Hotel Page'></form></div><div class='extra-info'><div></div></div></div></div>");
+					$("#first-results").css({
+						'display': 'flex',
+						'flex-wrap': 'wrap',
+					});
+					$("#first-results").find(".search-result-row").css({
+							'flex': '80%',
+							'background-color': 'green',
+							'padding': '20px'
+					});
+
+					$("#first-results").find(".search-result-side").css ({
+						'flex': '30%',
+						'background-color': 'yellow',
+					});
+					$("#first-results").find(".search-result-main").css ({
+						'flex': '70%',
+						'background-color': 'red',
+					});
+					for (var i = 0; i < jsonStr.length; i++) {
+						console.log("city: "+jsonStr[i].city
+						+",guests:" +jsonStr[i].count_of_guests+
+						",room id:" + jsonStr[i].room_id + ",photo:"+jsonStr[i].photo+",name:"+jsonStr[i].name+
+						",room type:"+jsonStr[i].room_type + ",price:"+jsonStr[i].price+",short description:"+jsonStr[i].short_description);
 					}
+				},
+				error: function( req, status, err ) {
+					console.log( 'something went wrong', status, err );
+				}
 			});
 		});
-
-		function parseJQueryAjaxResponse(responseData) {
-			if ('isValidEmail' in responseData) {
-				if (responseData['isValidEmail']) {
-					$('#messages').html("<div class='success'>Your email is valid!</div>");
-				} else {
-					$('#messages').html("<div class='error'>Your email is invalid</div>");
-				}
-			} else {
-				$('#messages').html("<div class='error'>Invalid AJAX response.</div>");
-			}
-		}
 	
-	
-	
-		$('#filter-btn').on('click', function() {
-			console.log("my new filter has "+$('#count_of_guests').val()+" guests  and " + $('#room_type').val()+" :type in city "+$('#city').val() );
-			if (($('#start_price').val())&&($('#end_price').val())){
-				console.log("start_price and end_price are not empty");
-				
-			} else {
-				console.log("something's fishy");
-			}
-		});	
-	});
-</script>
+    });		
+	</script>
 	<script>
 
 	$( "#slider" ).slider({

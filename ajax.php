@@ -219,7 +219,15 @@ if (isset($_POST['email'])) {
                     },
                     dataType: 'json',
                     success: function (result, status, xhr) {
-                        parseJQueryAjaxResponse(result);
+						if ('isValidEmail' in result) {
+							if (result['isValidEmail']) {
+								$('#messages').html("<div class='success'>Your email is valid!</div>");
+							} else {
+								$('#messages').html("<div class='error'>Your email is invalid</div>");
+							}
+						} else {
+							$('#messages').html("<div class='error'>Invalid AJAX response.</div>");
+						}
                     },
                     error: function (xhr,status,error) {
                         $('#messages').html("<div class='error'>AJAX request failed.</div>");
@@ -240,7 +248,7 @@ if (isset($_POST['email'])) {
         }
 		</script>
     </head>
-    <body onload="initAjaxButtons()">
+    <body onload="initJQueryAjaxButton()">
         <header>
             <span class="logo">Web Development Academy</span>
         </header>
@@ -254,23 +262,6 @@ if (isset($_POST['email'])) {
 			    <div class="success">Your email is valid!</div>
 			    <?php endif; ?>
 			</div>
-			<form onsubmit="return isValidEmail('email-field')" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<fieldset>
-					<legend>Pure JS</legend>
-					<label for="email-field">Email:</label>
-					<input 
-					    type="text" 
-    					id="email-field" 
-					    name="email" 
-					    onfocus="resetErrors(this.id)" 
-					    value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>" 
-				    >
-				   
-					<input type="reset" id="reset-btn-1" name="reset" value="Reset">
-					<input type="submit" id="submit-btn-1" name="send" value="Submit">
-					<input type="button" id="ajax-btn-1" name="ajax" value="AJAX">
-				</fieldset>
-			</form>
 			<form onsubmit="return jqIsValidEmail('jq-email-field')" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 				<fieldset>
 					<legend>jQuery</legend>

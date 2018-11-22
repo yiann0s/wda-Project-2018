@@ -17,3 +17,4 @@ kai an afta einai kena h' oxi.
 Den organwthike o kwdika me MVC
 Den eftiaksa profile-page selida
 Episynaptw sto paron kai thn selida tou repo mou sto github > https://github.com/yiann0s/wda-Project-2018
+Efxaristw, kalh synexeia.

@@ -24,7 +24,7 @@ $result1 = mysqli_query($connect, $room_type_query);
 	<script src="scripts/customJSscripts.js"></script>
 	<body">
 		<div class="welcome-navbar">
-			<a href="#">Hotels</a> 
+			<a href="#">My Hotel views</a> 
 			<a class="active" href="#home"><i class="fa fa-fw fa-home"></i>Home</a> 
 		</div>
 		<div class="welcome-bg-img">
